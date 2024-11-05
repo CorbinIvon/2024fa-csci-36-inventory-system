@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "2024fa-csci-36-inventory-system",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -17,7 +17,7 @@
   },
   "packageManager": "npm@10.8.3",
   "workspaces": [
-    "apps/*",
+    "apps/frontend/*",
     "packages/*"
   ]
 }
