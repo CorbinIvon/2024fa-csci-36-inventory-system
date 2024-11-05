@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: invmang_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: invmang
+      MYSQL_USER: invuser
+      MYSQL_PASSWORD: invpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  api:
+    build: ./invmang_api
+    container_name: invmang_api
+    ports:
+      - "18080:18080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: invuser
+      DB_PASSWORD: invpassword
+      DB_NAME: invmang
+
+  web:
+    build: ./invmang_web
+    container_name: invmang_web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    volumes:
+      - ./invmang_web:/app  # Optional volume for development
+
+volumes:
+  db_data:
