@@ -19,5 +19,8 @@
   "workspaces": [
     "apps/frontend/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@material-ui/core": "^4.12.4"
+  }
 }
