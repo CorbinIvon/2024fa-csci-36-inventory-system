@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 const ThemePicker: React.FC = () => {
-  // Available themes
+  // Available themes found in the themes.css and themes-dark.css files
   const themes: string[] = [
     'strawberry',
     'mint',
