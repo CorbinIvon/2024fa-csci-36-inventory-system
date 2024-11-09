@@ -1,0 +1,79 @@
+/* Dark Strawberry Theme */
+[data-theme='dark-strawberry'] {
+  --primary-color: #c0392b; /* Deeper Strawberry Red */
+  --secondary-color: #e74c3c; /* Deep Pink */
+  --background-color: #2b1a1a; /* Dark Red-Brown Background */
+  --text-color: #f8e9e9; /* Soft Off-White for readability */
+}
+
+/* Dark Mint Theme */
+[data-theme='dark-mint'] {
+  --primary-color: #27ae60; /* Deeper Mint Green */
+  --secondary-color: #1f8f4c; /* Dark Mint */
+  --background-color: #143826; /* Deep Forest Green Background */
+  --text-color: #eafaf1; /* Light Mint White for readability */
+}
+
+/* Dark Blueberry Theme */
+[data-theme='dark-blueberry'] {
+  --primary-color: #21618c; /* Deeper Blueberry Blue */
+  --secondary-color: #1a4f72; /* Dark Blue */
+  --background-color: #102a43; /* Dark Navy Background */
+  --text-color: #d6e4f0; /* Soft Blue-White for readability */
+}
+
+/* Dark Lemon Theme */
+[data-theme='dark-lemon'] {
+  --primary-color: #c7a005; /* Deeper Lemon Yellow */
+  --secondary-color: #a67c00; /* Dark Yellow */
+  --background-color: #3a2e1e; /* Deep Brown Background */
+  --text-color: #fff7e0; /* Soft Light Yellow for readability */
+}
+
+/* Dark Grape Theme */
+[data-theme='dark-grape'] {
+  --primary-color: #5b2c6f; /* Deeper Grape Purple */
+  --secondary-color: #4a235a; /* Dark Purple */
+  --background-color: #2c1a33; /* Deep Purple Background */
+  --text-color: #ede7f6; /* Light Purple-White for readability */
+}
+
+/* Dark Chocolate Theme */
+[data-theme='dark-chocolate'] {
+  --primary-color: #4e342e; /* Deeper Chocolate Brown */
+  --secondary-color: #3e2723; /* Dark Brown */
+  --background-color: #1c0d0d; /* Rich Dark Chocolate Background */
+  --text-color: #f3e5ab; /* Soft Cream for readability */
+}
+
+/* Dark Coconut Theme */
+[data-theme='dark-coconut'] {
+  --primary-color: #bfbfbf; /* Deeper Coconut Gray */
+  --secondary-color: #8d8d8d; /* Dark Gray */
+  --background-color: #2e2e2e; /* Deep Charcoal Background */
+  --text-color: #ffffff; /* Bright White for contrast */
+}
+
+/* Dark Orange Theme */
+[data-theme='dark-orange'] {
+  --primary-color: #d35400; /* Deeper Orange */
+  --secondary-color: #a04000; /* Dark Burnt Orange */
+  --background-color: #3b2100; /* Deep Orange-Brown Background */
+  --text-color: #ffe6cc; /* Soft Light Orange for readability */
+}
+
+/* Dark Watermelon Theme */
+[data-theme='dark-watermelon'] {
+  --primary-color: #c0392b; /* Deeper Watermelon Red */
+  --secondary-color: #145a32; /* Dark Watermelon Rind Green */
+  --background-color: #1f1f1f; /* Dark Charcoal Background */
+  --text-color: #f5e6e8; /* Soft Pink-White for readability */
+}
+
+/* Dark Peach Theme */
+[data-theme='dark-peach'] {
+  --primary-color: #e67e22; /* Deeper Peach Orange */
+  --secondary-color: #a04000; /* Dark Peach Brown */
+  --background-color: #3e2413; /* Deep Brown Background */
+  --text-color: #f9e4d4; /* Soft Peach White for readability */
+}

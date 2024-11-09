@@ -1,0 +1,87 @@
+/* Dark theme */
+[data-theme='dark'] {
+  --primary-color: #9b59b6;
+  --secondary-color: #e74c3c;
+  --background-color: #2c3e50;
+  --text-color: #ecf0f1;
+}
+
+/* Strawberry Theme */
+[data-theme='strawberry'] {
+  --primary-color: #e74c3c; /* Strawberry Red */
+  --secondary-color: #f1948a; /* Light Pink */
+  --background-color: #fff0f3; /* Soft Pink Background */
+  --text-color: #2e2e2e; /* Dark Charcoal for readability */
+}
+
+/* Mint Theme */
+[data-theme='mint'] {
+  --primary-color: #2ecc71; /* Mint Green */
+  --secondary-color: #a9dfbf; /* Light Mint */
+  --background-color: #e8f8f5; /* Soft Mint Background */
+  --text-color: #1e1e1e; /* Dark Gray for readability */
+}
+
+/* Blueberry Theme */
+[data-theme='blueberry'] {
+  --primary-color: #3498db; /* Blueberry Blue */
+  --secondary-color: #85c1e9; /* Light Blue */
+  --background-color: #ebf5fb; /* Soft Blue Background */
+  --text-color: #1b2631; /* Deep Navy for contrast */
+}
+
+/* Lemon Theme */
+[data-theme='lemon'] {
+  --primary-color: #f1c40f; /* Lemon Yellow */
+  --secondary-color: #f9e79f; /* Light Yellow */
+  --background-color: #fef9e7; /* Soft Yellow Background */
+  --text-color: #5d4037; /* Brown for contrast */
+}
+
+/* Grape Theme */
+[data-theme='grape'] {
+  --primary-color: #8e44ad; /* Grape Purple */
+  --secondary-color: #d2b4de; /* Light Purple */
+  --background-color: #f5eef8; /* Soft Purple Background */
+  --text-color: #2d3436; /* Dark Gray for contrast */
+}
+
+/* Chocolate Theme */
+[data-theme='chocolate'] {
+  --primary-color: #6f4e37; /* Chocolate Brown */
+  --secondary-color: #a0522d; /* Lighter Chocolate */
+  --background-color: #f3e5ab; /* Creamy Background */
+  --text-color: #1b1b1b; /* Deep Black for contrast */
+}
+
+/* Coconut Theme */
+[data-theme='coconut'] {
+  --primary-color: #f5f5f5; /* Coconut White */
+  --secondary-color: #d5d5d5; /* Light Gray */
+  --background-color: #ffffff; /* Bright White Background */
+  --text-color: #3b3b3b; /* Dark Gray for contrast */
+}
+
+/* Orange Theme */
+[data-theme='orange'] {
+  --primary-color: #e67e22; /* Orange */
+  --secondary-color: #f5b041; /* Light Orange */
+  --background-color: #fdf2e9; /* Soft Orange Background */
+  --text-color: #2c2c2c; /* Charcoal for contrast */
+}
+
+/* Watermelon Theme */
+[data-theme='watermelon'] {
+  --primary-color: #ff6f61; /* Watermelon Red */
+  --secondary-color: #d1f2eb; /* Light Green for rind */
+  --background-color: #fef5e7; /* Light Cream Background */
+  --text-color: #34495e; /* Deep Blue for contrast */
+}
+
+/* Peach Theme */
+[data-theme='peach'] {
+  --primary-color: #ff9f80; /* Peach Orange */
+  --secondary-color: #ffccbc; /* Light Peach */
+  --background-color: #fff5eb; /* Soft Peach Background */
+  --text-color: #3e2723; /* Deep Brown for readability */
+}
