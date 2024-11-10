@@ -10,6 +10,8 @@ import NodeCreationForm from './node/NodeCreationForm'
 import NodeDescriptionModal from './node/NodeDescriptionModal'
 import Node from '@repo/node-api/src/node'
 import UserProfile from './user/UserProfile'
+import IconButton, { IconButtonSize, IconButtonType } from './ui/IconButton'
+import * as mui from '@mui/icons-material'
 
 const Page: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -178,15 +180,19 @@ const Page: React.FC = () => {
 
       <h1>Component Demonstrations</h1>
 
-      <h2>&gt;&gt;&gt; components/auth/</h2>
-      <h4>SignInWithGoogle.tsx</h4>
-
       <h2>&gt;&gt;&gt; components/ui/</h2>
-      <h4>CircleButton.tsx</h4>
-      <h4>HomeButton.tsx</h4>
-      <h4>LoadingSpinner.tsx</h4>
-      <h4>ErrorBoundary.tsx</h4>
-      <h4>GenericButton.tsx</h4>
+      <h4>IconButton.tsx</h4>
+      <div className="flex gap-4 items-center">
+        <IconButton icon={mui.Add} size={IconButtonSize.LARGE} onClick={() => console.log('Add clicked')} />
+        <IconButton icon={mui.Home} onClick={() => console.log('Home clicked')} />
+        <IconButton
+          icon={mui.Settings}
+          size={IconButtonSize.SMALL}
+          type={IconButtonType.SECONDARY}
+          onClick={() => console.log('Settings clicked')}
+        />
+        <IconButton icon={mui.ArrowBack} disabled onClick={() => console.log('Back clicked')} />
+      </div>
 
       <h2>&gt;&gt;&gt; components/user/</h2>
       <h4>UserProfile.tsx</h4>
@@ -198,10 +204,6 @@ const Page: React.FC = () => {
         />
         <p className="text-sm text-gray-600">Click the avatar to trigger the profile action</p>
       </div>
-
-      <h2>&gt;&gt;&gt; components/navigation/</h2>
-      <h4>BreadcrumbNavigation.tsx</h4>
-      <h4>SideNavigationMenu.tsx</h4>
 
       <h2>&gt;&gt;&gt; components/node/</h2>
       <div className="space-y-8 mb-8">
