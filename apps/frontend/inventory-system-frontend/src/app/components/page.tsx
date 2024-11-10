@@ -9,6 +9,7 @@ import NodeCard from './node/NodeCard'
 import NodeCreationForm from './node/NodeCreationForm'
 import NodeDescriptionModal from './node/NodeDescriptionModal'
 import Node from '@repo/node-api/src/node'
+import UserProfile from './user/UserProfile'
 
 const Page: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -159,13 +160,22 @@ const Page: React.FC = () => {
     setIsDialogOpen(false)
   }
 
+  const handleProfileClick = () => {
+    console.log('Profile clicked')
+    // You can add more functionality here, like opening a menu
+  }
+
   if (!isHydrated) {
     return null
   }
 
   return (
     <div className="pl-5 pt-5">
-      <ThemePicker />
+      <div className="flex">
+        <div className="spinner" />
+        <ThemePicker />
+      </div>
+
       <h1>Component Demonstrations</h1>
 
       <h2>&gt;&gt;&gt; components/auth/</h2>
@@ -180,6 +190,14 @@ const Page: React.FC = () => {
 
       <h2>&gt;&gt;&gt; components/user/</h2>
       <h4>UserProfile.tsx</h4>
+      <div className="space-y-2">
+        <UserProfile
+          name="John Doe"
+          onClick={handleProfileClick}
+          // Optionally add imageUrl prop with actual image path
+        />
+        <p className="text-sm text-gray-600">Click the avatar to trigger the profile action</p>
+      </div>
 
       <h2>&gt;&gt;&gt; components/navigation/</h2>
       <h4>BreadcrumbNavigation.tsx</h4>
