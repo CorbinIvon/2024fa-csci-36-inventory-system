@@ -131,7 +131,7 @@ const Page: React.FC = () => {
     return result
   }
 
-  const [selectedDemoNode, setSelectedDemoNode] = useState<null | any>(null)
+  const [selectedDemoNode, setSelectedDemoNode] = useState<Node | null>(null)
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
 
   // Initialize states
@@ -233,7 +233,7 @@ const Page: React.FC = () => {
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded"
             onClick={() => {
-              setSelectedDemoNode(dummyNodes[0])
+              setSelectedDemoNode(dummyNodes[0] || null)
               setIsDemoModalOpen(true)
             }}
           >
