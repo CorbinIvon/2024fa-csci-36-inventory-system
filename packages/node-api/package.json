@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./node": "./src/node.ts",
-    "./nodeAPI": "./src/nodeAPI.ts"
+    "nodeData": "./src/nodeData.ts",
+    "nodeAPI": "./src/nodeAPI.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

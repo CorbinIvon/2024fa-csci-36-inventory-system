@@ -1,42 +1,40 @@
 'use client'
 
 import React from 'react'
-import Node from '@repo/node-api/src/node'
+import NodeData from '@repo/node-api/src/nodeData'
 
 interface NodeDescriptionModalProps {
   isOpen: boolean
   onClose: () => void
-  node: Node
+  node: NodeData
 }
 
 const NodeDescriptionModal: React.FC<NodeDescriptionModalProps> = ({ isOpen, onClose, node }) => {
   if (!isOpen) return null
 
-  const children = node.getChildren()
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg max-w-2xl w-full mx-4">
-        <h2 className="text-2xl font-bold mb-4">{node.value.name}</h2>
-        <p className="text-gray-600 mb-4">{node.value.description}</p>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
 
-        {children.length > 0 && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Child Nodes:</h3>
-            <ul className="list-disc pl-6">
-              {children.map((child) => (
-                <li key={child.value.id} className="mb-2">
-                  <span className="font-medium">{child.value.name}</span>
-                  <p className="text-sm text-gray-500">{child.value.description}</p>
-                </li>
-              ))}
-            </ul>
+        <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+          <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <h3 className="text-lg font-semibold leading-6 text-gray-900 mb-2">{node?.name || 'Unnamed Node'}</h3>
+            <div className="mt-2">
+              <p className="text-gray-600">{node?.description || 'No description available'}</p>
+            </div>
           </div>
-        )}
 
-        <button onClick={onClose} className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Close
-        </button>
+          <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

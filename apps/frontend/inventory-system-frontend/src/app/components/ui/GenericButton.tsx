@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Button } from '@material-ui/core'
+import { Button } from '@mui/material'
 
 interface GenericButtonProps {
   label: string
@@ -10,9 +10,9 @@ interface GenericButtonProps {
   variant?: 'text' | 'outlined' | 'contained'
 }
 
-const GenericButton: React.FC<GenericButtonProps> = ({ label, onClick, color = 'default', variant = 'text' }) => {
+const GenericButton: React.FC<GenericButtonProps> = ({ label, onClick, variant = 'text' }) => {
   return (
-    <Button onClick={onClick} color={color} variant={variant}>
+    <Button onClick={onClick} variant={variant}>
       {label}
     </Button>
   )
