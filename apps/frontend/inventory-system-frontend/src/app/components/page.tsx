@@ -141,7 +141,7 @@ const Page: React.FC = () => {
     if (dummyNodes.length === 0) {
       setDummyNodes(createDummyNodes())
     }
-  }, []) // Empty dependency array ensures this runs only once
+  }, [dummyNodes.length])
 
   const handleSearch = (term: string) => {
     setSearchTerm(term)

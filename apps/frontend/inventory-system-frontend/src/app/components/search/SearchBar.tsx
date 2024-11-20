@@ -38,7 +38,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearch, onClear, no
   // Update options when nodes change
   React.useEffect(() => {
     setOptions(getAllNodes(nodes))
-  }, [nodes])
+  }, [getAllNodes])
 
   const handleSearch = (value: string) => {
     setTerm(value)
