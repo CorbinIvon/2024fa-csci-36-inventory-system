@@ -1,0 +1,29 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+/// Represents a node in the tree structure
+model Node {
+  // Primary identifier
+  node_id    String   @id @default(uuid()) @map("id")
+  parent_id  String?  @map("parent_id")
+  data       Json     @default("{}")
+
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  parent     Node?    @relation("NodeHierarchy", fields: [parent_id], references: [node_id], onDelete: NoAction, onUpdate: NoAction)
+  children   Node[]   @relation("NodeHierarchy")
+
+  // Indexes
+  @@index([parent_id], name: "idx_parent_id")
+  @@map("nodes")
+}
