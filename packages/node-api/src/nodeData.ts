@@ -79,6 +79,16 @@ class NodeData {
     return this.parent
   }
 
+  getPath(): string {
+    const parts: string[] = [this.name || 'Unnamed Node']
+    let current = this.parent
+    while (current) {
+      parts.unshift(current.name || 'Unnamed Node')
+      current = current.parent
+    }
+    return parts.join(' / ')
+  }
+
   toJson(): any {
     return {
       id: this.id,

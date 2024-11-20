@@ -97,22 +97,23 @@ const NodeList: React.FC<NodeListProps> = ({ rootNodes, onNodeCreate }) => {
   const navigateToNode = (targetNode: NodeData) => {
     const findPathToNode = (nodes: NodeData[], path: NodeData[] = []): NodeData[] | null => {
       for (const node of nodes) {
-        if (node.id === targetNode.id) {
-          return path
-        }
+        // Check if any children of this node is our target
         const children = node.getChildren()
-        if (children.length > 0) {
-          const foundPath = findPathToNode(children, [...path, node])
-          if (foundPath) return foundPath
+        if (children.some((child) => child.id === targetNode.id)) {
+          return [...path, node]
         }
+        // If not found in direct children, search deeper
+        const foundPath = findPathToNode(children, [...path, node])
+        if (foundPath) return foundPath
       }
       return null
     }
 
     const path = findPathToNode(rootNodes)
     if (path) {
-      setNavigationHistory(path)
-      setCurrentNode(path[path.length - 1] || null)
+      const parentNode = path[path.length - 1]
+      setNavigationHistory(path.slice(0, -1))
+      setCurrentNode(parentNode || null)
     }
   }
 

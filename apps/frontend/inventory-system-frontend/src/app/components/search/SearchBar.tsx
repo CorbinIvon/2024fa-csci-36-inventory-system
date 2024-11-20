@@ -8,61 +8,28 @@ interface SearchBarProps {
   onSearch: (term: string) => void
   onClear: () => void
   nodes: NodeData[]
-  onNodeSelect?: (node: NodeData) => void // Add this prop
+  onNodeSelect?: (node: NodeData) => void
 }
 
-interface NodeOption {
-  id: string
-  name: string
-  path: string // Store the full path to the node
-  node: NodeData // Add reference to actual node
-}
-
-// Move getAllNodes outside of component
-const getAllNodes = (nodes: NodeData[], parentPath = ''): NodeOption[] => {
-  let result: NodeOption[] = []
+// Get all nodes as a flat array
+const getAllNodes = (nodes: NodeData[]): NodeData[] => {
+  let result: NodeData[] = []
   nodes.forEach((node) => {
-    const nodeName = node.name || 'Unnamed Node'
-    const currentPath = parentPath ? `${parentPath} / ${nodeName}` : nodeName
-    result.push({
-      id: node.id, // Using the unique node ID
-      name: nodeName,
-      path: currentPath,
-      node: node,
-    })
-    result = result.concat(getAllNodes(node.getChildren(), currentPath))
+    result.push(node)
+    result = result.concat(getAllNodes(node.getChildren()))
   })
   return result
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearch, onClear, nodes, onNodeSelect }) => {
   const [term, setTerm] = React.useState(searchTerm)
-  const [currentPath, setCurrentPath] = React.useState('')
-  const [options, setOptions] = React.useState<NodeOption[]>([])
+  const [options, setOptions] = React.useState<NodeData[]>([])
 
-  // Update options when nodes change
   React.useEffect(() => {
-    // Always show all available options from current context
     setOptions(getAllNodes(nodes))
-  }, [nodes]) // Only depend on nodes prop
-
-  const handleInputChange = (value: string) => {
-    // If user is typing after last '/', update search term only
-    // Otherwise, update the path
-    const parts = value.split(' / ')
-    if (parts.length > 1) {
-      const newPath = parts.slice(0, -1).join(' / ')
-      setCurrentPath(newPath)
-      setTerm(parts[parts.length - 1] || '')
-    } else {
-      setCurrentPath('')
-      setTerm(value)
-    }
-    onSearch(value)
-  }
+  }, [nodes])
 
   const handleClear = () => {
-    setCurrentPath('')
     setTerm('')
     onClear()
   }
@@ -72,31 +39,33 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearch, onClear, no
       <Autocomplete
         freeSolo
         options={options}
-        getOptionLabel={(option) => (typeof option === 'string' ? option : option.path)}
-        inputValue={currentPath ? `${currentPath} / ${term}` : term}
-        onInputChange={(_, value) => handleInputChange(value)}
+        getOptionLabel={(option) => {
+          if (typeof option === 'string') return option
+          return option.getPath()
+        }}
+        inputValue={term}
+        onInputChange={(_, value) => {
+          setTerm(value)
+          onSearch(value)
+        }}
         onChange={(_, value) => {
-          if (typeof value === 'object' && value && onNodeSelect) {
-            onNodeSelect(value.node)
+          if (value instanceof NodeData && onNodeSelect) {
+            onNodeSelect(value)
+            setTerm('')
           }
         }}
-        onFocus={() => setOptions(getAllNodes(nodes))}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            <Box>
+              <div>{option.name}</div>
+              <div style={{ fontSize: '0.8em', color: 'gray' }}>{option.getPath()}</div>
+            </Box>
+          </li>
+        )}
+        sx={{ flexGrow: 1, marginRight: 1 }}
         renderInput={(params) => (
           <TextField {...params} placeholder="Search nodes..." variant="outlined" size="small" />
         )}
-        renderOption={(props, option) => {
-          // Ensure unique key by combining id with path
-          const uniqueKey = `${option.id}-${option.path.replace(/\s/g, '-')}`
-          return (
-            <li {...props} key={uniqueKey}>
-              <Box>
-                <div>{option.name}</div>
-                <div style={{ fontSize: '0.8em', color: 'gray' }}>{option.path}</div>
-              </Box>
-            </li>
-          )
-        }}
-        sx={{ flexGrow: 1, marginRight: 1 }}
       />
       <Button onClick={handleClear} color="secondary" variant="outlined">
         Clear
