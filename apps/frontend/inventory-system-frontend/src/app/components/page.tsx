@@ -8,10 +8,11 @@ import NodeList from './node/NodeList'
 import NodeCard from './node/NodeCard'
 import NodeCreationForm from './node/NodeCreationForm'
 import NodeDescriptionModal from './node/NodeDescriptionModal'
-import Node from '@repo/node-api/src/node'
 import UserProfile from './user/UserProfile'
 import IconButton, { IconButtonSize, IconButtonType } from './ui/IconButton'
 import * as mui from '@mui/icons-material'
+import NodeData from '@repo/node-api/src/nodeData'
+import { createDummyNodes, createDemoNode, findNodeById } from '../data/dummy-data'
 
 const Page: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -19,120 +20,10 @@ const Page: React.FC = () => {
   const [isHydrated, setIsHydrated] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDemoNodeModalOpen, setIsDemoNodeModalOpen] = useState(false)
-  const [dummyNodes, setDummyNodes] = useState<Node[]>([])
-
-  // Create a single demo node for NodeCard demonstration
-  const demoNode = new Node({
-    id: 'demo-1',
-    name: 'Demo Node',
-    description: 'This is a demonstration of the NodeCard component',
-    parentNodeID: null,
-  })
-
-  // Move createDummyNodes outside component to avoid recreation on each render
-  const createDummyNodes = () => {
-    // Create root node
-    const rootNode = new Node({
-      id: '1',
-      name: 'Root Node',
-      description: 'This is the root node of our system',
-      parentNodeID: null,
-    })
-
-    // Create department nodes
-    const deptA = new Node({
-      id: '2',
-      name: 'Department A',
-      description: 'First department',
-      parentNodeID: '1',
-    })
-
-    const deptB = new Node({
-      id: '3',
-      name: 'Department B',
-      description: 'Second department',
-      parentNodeID: '1',
-    })
-
-    // Create team nodes for Department A
-    const teamA1 = new Node({
-      id: '4',
-      name: 'Team A1',
-      description: 'First team in Department A',
-      parentNodeID: '2',
-    })
-
-    const teamA2 = new Node({
-      id: '5',
-      name: 'Team A2',
-      description: 'Second team in Department A',
-      parentNodeID: '2',
-    })
-
-    // Create team node for Department B
-    const teamB1 = new Node({
-      id: '6',
-      name: 'Team B1',
-      description: 'First team in Department B',
-      parentNodeID: '3',
-    })
-
-    // Set up hierarchy
-    deptA.setChildren(teamA1, teamA2)
-    deptB.setChildren(teamB1)
-    rootNode.setChildren(deptA, deptB)
-
-    return [rootNode]
-  }
-
-  // Helper function to find a node by ID in the tree
-  const findNodeById = (nodes: Node[], id: string): Node | null => {
-    for (const node of nodes) {
-      if (node.value.id === id) return node
-      const found = findNodeById(node.getChildren(), id)
-      if (found) return found
-    }
-    return null
-  }
-
-  // Generate unique ID for new nodes
-  const generateNodeId = () => {
-    return `node-${Math.random().toString(36).substr(2, 9)}`
-  }
-
-  const handleNodeSubmit = (data: { name: string; description: string; parentNodeID?: string }) => {
-    const newNode = new Node({
-      id: generateNodeId(),
-      name: data.name,
-      description: data.description,
-      parentNodeID: data.parentNodeID || null,
-    })
-
-    if (data.parentNodeID) {
-      // Find parent node and add new node as child
-      const parentNode = findNodeById(dummyNodes, data.parentNodeID)
-      if (parentNode) {
-        parentNode.addChild(newNode)
-        setDummyNodes([...dummyNodes]) // Trigger re-render
-      }
-    } else {
-      // Add as root node
-      setDummyNodes([...dummyNodes, newNode])
-    }
-  }
-
-  // Get all available nodes for parent selection
-  const getAllNodes = (nodes: Node[]): Array<{ id: string; name: string }> => {
-    let result: Array<{ id: string; name: string }> = []
-    nodes.forEach((node) => {
-      result.push({ id: node.value.id, name: node.value.name })
-      result = result.concat(getAllNodes(node.getChildren()))
-    })
-    return result
-  }
-
-  const [selectedDemoNode, setSelectedDemoNode] = useState<Node | null>(null)
+  const [dummyNodes, setDummyNodes] = useState<NodeData[]>([])
+  const [selectedDemoNode, setSelectedDemoNode] = useState<NodeData | null>(null)
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
+  const demoNode = createDemoNode()
 
   // Initialize states
   useEffect(() => {
@@ -165,6 +56,35 @@ const Page: React.FC = () => {
   const handleProfileClick = () => {
     console.log('Profile clicked')
     // You can add more functionality here, like opening a menu
+  }
+
+  const getAllNodes = (nodes: NodeData[]): NodeData[] => {
+    let allNodes: NodeData[] = []
+    nodes.forEach((node) => {
+      allNodes.push(node)
+      allNodes = allNodes.concat(getAllNodes(node.getChildren()))
+    })
+    return allNodes
+  }
+
+  const handleNodeSubmit = (nodeData: { name: string; description: string; parentNodeID?: string }) => {
+    const newNode = new NodeData({
+      id: `node-${Math.random().toString(36).substr(2, 9)}`,
+      name: nodeData.name,
+      description: nodeData.description,
+    })
+
+    if (nodeData.parentNodeID) {
+      // Find parent node and add new node as child
+      const parentNode = findNodeById(dummyNodes, nodeData.parentNodeID)
+      if (parentNode) {
+        parentNode.addChild(newNode)
+        setDummyNodes([...dummyNodes]) // Trigger re-render
+      }
+    } else {
+      // Add as root node
+      setDummyNodes([...dummyNodes, newNode])
+    }
   }
 
   if (!isHydrated) {
@@ -225,7 +145,10 @@ const Page: React.FC = () => {
 
         <div>
           <h4>NodeCreationForm.tsx</h4>
-          <NodeCreationForm onSubmit={handleNodeSubmit} parentNodes={getAllNodes(dummyNodes)} />
+          <NodeCreationForm
+            onSubmit={handleNodeSubmit}
+            parentNodes={getAllNodes(dummyNodes).map((node) => ({ id: node.id, name: node.name || '' }))}
+          />
         </div>
 
         <div>
@@ -250,7 +173,9 @@ const Page: React.FC = () => {
 
         <div>
           <h4>NodeList.tsx</h4>
-          <div className="border p-4 rounded">{dummyNodes.length > 0 && <NodeList rootNodes={dummyNodes} />}</div>
+          <div className="border p-4 rounded">
+            {dummyNodes.length > 0 && <NodeList rootNodes={dummyNodes} onNodeCreate={handleNodeSubmit} />}
+          </div>
         </div>
       </div>
 

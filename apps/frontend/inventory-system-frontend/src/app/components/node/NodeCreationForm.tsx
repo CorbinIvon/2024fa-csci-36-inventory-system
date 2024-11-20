@@ -5,13 +5,14 @@ import React, { useState } from 'react'
 interface NodeCreationFormProps {
   onSubmit: (data: { name: string; description: string; parentNodeID?: string }) => void
   parentNodes?: Array<{ id: string; name: string }>
+  defaultParentId?: string | null
 }
 
-const NodeCreationForm: React.FC<NodeCreationFormProps> = ({ onSubmit, parentNodes = [] }) => {
+const NodeCreationForm: React.FC<NodeCreationFormProps> = ({ onSubmit, parentNodes = [], defaultParentId = null }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    parentNodeID: '',
+    parentNodeID: defaultParentId || '',
   })
 
   const handleSubmit = (e: React.FormEvent) => {
