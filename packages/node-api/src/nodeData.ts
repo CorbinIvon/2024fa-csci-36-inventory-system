@@ -4,22 +4,42 @@ class NodeData {
   public id: string
   public name: string | null
   public description: string | null
+  public quantity: number
+  public tags: string[]
+  public createdAt: Date
+  public updatedAt: Date
+  public imageUrl: string | null
   public data: Record<string, any>
 
   constructor({
     id,
     name = null,
     description = null,
+    quantity = 1,
+    tags = [],
+    createdAt = new Date(),
+    updatedAt = new Date(),
+    imageUrl = null,
     data = {},
   }: {
     id: string
     name?: string | null
     description?: string | null
+    quantity?: number
+    tags?: string[]
+    createdAt?: Date
+    updatedAt?: Date
+    imageUrl?: string | null
     data?: Record<string, any>
   }) {
     this.id = id
     this.name = name
     this.description = description
+    this.quantity = quantity
+    this.tags = tags
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
+    this.imageUrl = imageUrl
     this.data = data
   }
 
@@ -89,12 +109,37 @@ class NodeData {
     return parts.join(' / ')
   }
 
+  findNodeByName(name: string): NodeData | null {
+    if (this.name === name) return this
+    for (const child of this.children) {
+      const found = child.findNodeByName(name)
+      if (found) return found
+    }
+    return null
+  }
+
+  filterByTag(tag: string): NodeData[] {
+    let results: NodeData[] = []
+    if (this.tags.includes(tag)) {
+      results.push(this)
+    }
+    for (const child of this.children) {
+      results = results.concat(child.filterByTag(tag))
+    }
+    return results
+  }
+
   toJson(): any {
     return {
       id: this.id,
       name: this.name,
       description: this.description,
+      quantity: this.quantity,
+      tags: this.tags,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
       data: this.data,
+      imageUrl: this.imageUrl,
       children: this.children.map((child) => child.toJson()),
     }
   }
@@ -104,7 +149,12 @@ class NodeData {
       id: json.id,
       name: json.name,
       description: json.description,
+      quantity: json.quantity,
+      tags: json.tags,
+      createdAt: new Date(json.createdAt),
+      updatedAt: new Date(json.updatedAt),
       data: json.data || {},
+      imageUrl: json.imageUrl,
     })
     if (json.children) {
       const children = json.children.map((childJson: any) => NodeData.fromJson(childJson))
