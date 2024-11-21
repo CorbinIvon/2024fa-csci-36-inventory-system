@@ -22,9 +22,11 @@
     "packages/*"
   ],
   "dependencies": {
+    "@ant-design/icons": "^5.5.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
-    "@mui/icons-material": "^5.15.0"
+    "antd": "^5.22.2"
   }
 }
