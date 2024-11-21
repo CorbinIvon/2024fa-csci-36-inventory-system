@@ -7,12 +7,6 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "devDependencies": {
-    "@types/react": "^18.3.12",
-    "prettier": "^3.2.5",
-    "turbo": "^2.2.3",
-    "typescript": "5.5.4"
-  },
   "engines": {
     "node": ">=18"
   },
@@ -21,6 +15,12 @@
     "apps/frontend/*",
     "packages/*"
   ],
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "prettier": "^3.2.5",
+    "turbo": "^2.2.3",
+    "typescript": "5.5.4"
+  },
   "dependencies": {
     "glob": "^11.0.0"
   }
