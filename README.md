@@ -4,7 +4,7 @@
 git clone git@github.com:CorbinIvon/2024fa-csci-36-inventory-system.git
 cd 2024fa-csci-36-inventory-system
 npm install turbo --global
-npm install --legacy-peer-deps
+npm install
 turbo run dev
 ```
 
