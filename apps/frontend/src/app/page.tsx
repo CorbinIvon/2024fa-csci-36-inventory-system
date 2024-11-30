@@ -125,6 +125,16 @@ export default function Home() {
     }
   }
 
+  async function handleMoveNode(nodeId: number, newParentId: number) {
+    try {
+      await nodeApi.moveNodes([nodeId], newParentId)
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+    } catch (error) {
+      console.error('Failed to move node:', error)
+    }
+  }
+
   return (
     <main className="flex min-h-screen">
       <div className="w-1/3 border-r p-4">
@@ -143,6 +153,7 @@ export default function Home() {
           onAddChild={handleAddNode}
           onDelete={handleContextDelete}
           onRestore={handleContextRestore}
+          onMoveNode={handleMoveNode}
         />
       </div>
       <div className="w-2/3 p-4">
