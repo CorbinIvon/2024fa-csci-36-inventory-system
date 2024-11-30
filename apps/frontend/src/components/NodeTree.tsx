@@ -27,13 +27,15 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
       >
         {hasChildren ? (
           <button
-            className="w-4 h-4 flex items-center justify-center"
+            className={`p-0 w-6 h-6 inline-flex items-center justify-center transition-transform duration-200 
+            hover:text-gray-700 text-gray-500 bg-transparent
+            ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
             onClick={(e) => {
-              e.stopPropagation() // Prevent parent click
+              e.stopPropagation()
               setIsExpanded(!isExpanded)
             }}
           >
-            {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            <ChevronRight size={14} />
           </button>
         ) : (
           <span className="w-4" />
