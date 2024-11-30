@@ -15,40 +15,37 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
   return (
     <div className="pl-2">
       <div
-        className={`flex items-center gap-1 p-1 hover:bg-gray-100 rounded cursor-pointer
+        className={`flex items-center gap-2 p-1 hover:bg-gray-100 rounded cursor-pointer
           ${node.deleted ? 'opacity-50 italic' : ''}`}
         onClick={(e) => {
-          // Call onSelect regardless of whether it's a parent or child
           if (onSelect) onSelect(node.id!.toString())
-          // Only toggle expansion if clicking the chevron area
-          if (hasChildren && e.target === e.currentTarget.firstChild) {
-            setIsExpanded(!isExpanded)
-          }
         }}
       >
-        {hasChildren ? (
-          <button
-            className={`p-0 w-6 h-6 inline-flex items-center justify-center transition-transform duration-200 
-            hover:text-gray-700 text-gray-500 bg-transparent
-            ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
-            onClick={(e) => {
-              e.stopPropagation()
-              setIsExpanded(!isExpanded)
-            }}
-          >
-            <ChevronRight size={14} />
-          </button>
-        ) : (
-          <span className="w-4" />
-        )}
-        {hasChildren ? <Folder size={16} /> : <File size={16} />}
-        <span className="text-sm flex items-center gap-1">
+        {/* Icon container with fixed width */}
+        <div className="w-6 flex justify-center">
+          {hasChildren ? (
+            <button
+              className={`p-0 w-6 h-6 inline-flex items-center justify-center transition-transform duration-200 
+                hover:text-gray-700 text-gray-500 bg-transparent
+                ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsExpanded(!isExpanded)
+              }}
+            >
+              <ChevronRight size={14} />
+            </button>
+          ) : null}
+        </div>
+        {/* Fixed width container for folder/file icon */}
+        <div className="w-5 flex justify-center">{hasChildren ? <Folder size={16} /> : <File size={16} />}</div>
+        <span className="text-sm flex items-center gap-1 flex-grow">
           {node.title}
           {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
         </span>
       </div>
       {isExpanded && hasChildren && (
-        <div className="ml-2 border-l">
+        <div className="ml-4 border-l border-gray-200">
           {node.children.map((child) => (
             <TreeNode key={child.id} node={child} onSelect={onSelect} />
           ))}
