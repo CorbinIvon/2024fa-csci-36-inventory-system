@@ -24,9 +24,8 @@
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "@ant-design/icons": "^5.5.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "antd": "^5.22.2"
+    "react-complex-tree": "^2.3.1"
   }
 }

@@ -1,13 +1,6 @@
-const {
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLList,
-  GraphQLInt,
-  GraphQLBoolean,
-  GraphQLSchema,
-} = require('graphql');
-const GraphQLJSON = require('graphql-type-json').default;
-const db = require('./db');
+const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt, GraphQLBoolean, GraphQLSchema } = require('graphql')
+const GraphQLJSON = require('graphql-type-json').default
+const db = require('./db')
 
 // NodePoint Type
 const NodePointType = new GraphQLObjectType({
@@ -21,7 +14,7 @@ const NodePointType = new GraphQLObjectType({
     version: { type: GraphQLInt },
     deleted: { type: GraphQLBoolean },
   },
-});
+})
 
 // NodePointHistory Type
 const NodePointHistoryType = new GraphQLObjectType({
@@ -36,7 +29,7 @@ const NodePointHistoryType = new GraphQLObjectType({
     action: { type: GraphQLString },
     timestamp: { type: GraphQLString },
   },
-});
+})
 
 // RootQuery
 const RootQuery = new GraphQLObjectType({
@@ -45,8 +38,8 @@ const RootQuery = new GraphQLObjectType({
     fetchAll: {
       type: new GraphQLList(NodePointType),
       async resolve() {
-        const result = await db.query('SELECT * FROM nodePoint WHERE deleted = FALSE');
-        return result.rows;
+        const result = await db.query('SELECT * FROM nodePoint WHERE deleted = FALSE')
+        return result.rows
       },
     },
     fetchHierarchy: {
@@ -61,24 +54,23 @@ const RootQuery = new GraphQLObjectType({
              INNER JOIN node_hierarchy nh ON np.parent = nh.id
            )
            SELECT * FROM node_hierarchy WHERE deleted = FALSE`,
-          [id]
-        );
-        return result.rows;
+          [id],
+        )
+        return result.rows
       },
     },
     fetchNodeHistory: {
       type: new GraphQLList(NodePointHistoryType),
       args: { nodePointId: { type: GraphQLInt } },
       async resolve(_, { nodePointId }) {
-        const result = await db.query(
-          `SELECT * FROM nodePointHistory WHERE nodePointId = $1 ORDER BY timestamp DESC`,
-          [nodePointId]
-        );
-        return result.rows;
+        const result = await db.query(`SELECT * FROM nodePointHistory WHERE nodePointId = $1 ORDER BY timestamp DESC`, [
+          nodePointId,
+        ])
+        return result.rows
       },
     },
   },
-});
+})
 
 // Mutations
 const Mutation = new GraphQLObjectType({
@@ -97,14 +89,15 @@ const Mutation = new GraphQLObjectType({
           const result = await db.query(
             `INSERT INTO nodePoint (parent, title, description, data) 
              VALUES ($1, $2, $3, $4) RETURNING *`,
-            [parent, title, description, data]
-          );
-          return result.rows[0];
+            [parent, title, description, data],
+          )
+          return result.rows[0]
         } catch (error) {
-          if (error.code === '23505') { // PostgreSQL unique constraint violation code
-            throw new Error('Duplicate name.');
+          if (error.code === '23505') {
+            // PostgreSQL unique constraint violation code
+            throw new Error('Duplicate name.')
           }
-          throw new Error('An unexpected error occurred.');
+          throw new Error('An unexpected error occurred.')
         }
       },
     },
@@ -117,23 +110,20 @@ const Mutation = new GraphQLObjectType({
         data: { type: GraphQLJSON },
       },
       async resolve(_, { id, title, description, data }) {
-        const existingNode = await db.query(
-          `SELECT * FROM nodePoint WHERE id = $1 AND deleted = FALSE`,
-          [id]
-        );
+        const existingNode = await db.query(`SELECT * FROM nodePoint WHERE id = $1 AND deleted = FALSE`, [id])
 
         if (existingNode.rows.length === 0) {
-          throw new Error(`NodePoint with id ${id} does not exist.`);
+          throw new Error(`NodePoint with id ${id} does not exist.`)
         }
 
-        const node = existingNode.rows[0];
+        const node = existingNode.rows[0]
 
         // Log the current version to the history table
         await db.query(
           `INSERT INTO nodePointHistory (nodePointId, version, title, description, data, action)
            VALUES ($1, $2, $3, $4, $5, 'update')`,
-          [node.id, node.version, node.title, node.description, node.data]
-        );
+          [node.id, node.version, node.title, node.description, node.data],
+        )
 
         // Update the node and increment its version
         const result = await db.query(
@@ -144,33 +134,30 @@ const Mutation = new GraphQLObjectType({
                version = version + 1
            WHERE id = $1 AND deleted = FALSE
            RETURNING *`,
-          [id, title, description, data]
-        );
+          [id, title, description, data],
+        )
 
-        return result.rows[0];
+        return result.rows[0]
       },
     },
     deleteNodePoint: {
       type: NodePointType,
       args: { id: { type: GraphQLInt } },
       async resolve(_, { id }) {
-        const existingNode = await db.query(
-          `SELECT * FROM nodePoint WHERE id = $1 AND deleted = FALSE`,
-          [id]
-        );
+        const existingNode = await db.query(`SELECT * FROM nodePoint WHERE id = $1 AND deleted = FALSE`, [id])
 
         if (existingNode.rows.length === 0) {
-          throw new Error(`NodePoint with id ${id} does not exist.`);
+          throw new Error(`NodePoint with id ${id} does not exist.`)
         }
 
-        const node = existingNode.rows[0];
+        const node = existingNode.rows[0]
 
         // Log the deletion to the history table
         await db.query(
           `INSERT INTO nodePointHistory (nodePointId, version, title, description, data, action)
            VALUES ($1, $2, $3, $4, $5, 'delete')`,
-          [node.id, node.version, node.title, node.description, node.data]
-        );
+          [node.id, node.version, node.title, node.description, node.data],
+        )
 
         // Soft delete the node
         const result = await db.query(
@@ -178,10 +165,10 @@ const Mutation = new GraphQLObjectType({
            SET deleted = TRUE
            WHERE id = $1
            RETURNING *`,
-          [id]
-        );
+          [id],
+        )
 
-        return result.rows[0];
+        return result.rows[0]
       },
     },
     moveMultipleNodePoints: {
@@ -191,7 +178,7 @@ const Mutation = new GraphQLObjectType({
         nodeIds: { type: new GraphQLList(GraphQLInt) },
       },
       async resolve(_, { newParent, nodeIds }) {
-        const movedNodes = [];
+        const movedNodes = []
         for (const id of nodeIds) {
           try {
             const result = await db.query(
@@ -204,24 +191,23 @@ const Mutation = new GraphQLObjectType({
                    )
                  )
                RETURNING *`,
-              [newParent, id]
-            );
+              [newParent, id],
+            )
             if (result.rows.length > 0) {
-              movedNodes.push(result.rows[0]);
+              movedNodes.push(result.rows[0])
             }
           } catch (error) {
-            console.error(`Failed to move node ${id}:`, error.message);
+            console.error(`Failed to move node ${id}:`, error.message)
           }
         }
-        return movedNodes;
+        return movedNodes
       },
     },
   },
-});
+})
 
 // Export Schema
 module.exports = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
-});
-
+})
