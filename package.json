@@ -12,7 +12,7 @@
   },
   "packageManager": "npm@10.8.3",
   "workspaces": [
-    "apps/frontend/*",
+    "apps/frontend/",
     "apps/backend/",
     "packages/*"
   ],
