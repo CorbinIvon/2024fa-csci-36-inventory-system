@@ -15,7 +15,8 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
   return (
     <div className="pl-2">
       <div
-        className="flex items-center gap-1 p-1 hover:bg-gray-100 rounded cursor-pointer"
+        className={`flex items-center gap-1 p-1 hover:bg-gray-100 rounded cursor-pointer
+          ${node.deleted ? 'opacity-50 italic' : ''}`}
         onClick={(e) => {
           // Call onSelect regardless of whether it's a parent or child
           if (onSelect) onSelect(node.id!.toString())
@@ -41,7 +42,10 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
           <span className="w-4" />
         )}
         {hasChildren ? <Folder size={16} /> : <File size={16} />}
-        <span className="text-sm">{node.title}</span>
+        <span className="text-sm flex items-center gap-1">
+          {node.title}
+          {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
+        </span>
       </div>
       {isExpanded && hasChildren && (
         <div className="ml-2 border-l">

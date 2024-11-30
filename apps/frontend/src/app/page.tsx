@@ -54,15 +54,30 @@ export default function Home() {
     if (!selectedNode?.id) return
     if (!confirm('Are you sure you want to delete this node?')) return
 
-    await nodeApi.deleteNode(selectedNode.id)
-    setSelectedNode(null)
-    await loadNodes()
+    try {
+      const deletedNode = await nodeApi.deleteNode(selectedNode.id)
+      setIsEditing(false) // Exit edit mode
+      setSelectedNode(deletedNode) // Keep the node selected but now marked as deleted
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+    } catch (error) {
+      console.error('Failed to delete node:', error)
+    }
   }
 
   async function handleNodeRestore() {
     if (!selectedNode?.id) return
-    await nodeApi.restoreNode(selectedNode.id)
-    await loadNodes()
+
+    try {
+      const restoredNode = await nodeApi.restoreNode(selectedNode.id)
+      // Update the selected node with the API response
+      setSelectedNode(restoredNode)
+      // Refresh the tree
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+    } catch (error) {
+      console.error('Failed to restore node:', error)
+    }
   }
 
   return (
