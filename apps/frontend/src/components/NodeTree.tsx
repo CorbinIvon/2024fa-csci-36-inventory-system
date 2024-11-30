@@ -16,13 +16,23 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
     <div className="pl-2">
       <div
         className="flex items-center gap-1 p-1 hover:bg-gray-100 rounded cursor-pointer"
-        onClick={() => {
-          if (hasChildren) setIsExpanded(!isExpanded)
+        onClick={(e) => {
+          // Call onSelect regardless of whether it's a parent or child
           if (onSelect) onSelect(node.id!.toString())
+          // Only toggle expansion if clicking the chevron area
+          if (hasChildren && e.target === e.currentTarget.firstChild) {
+            setIsExpanded(!isExpanded)
+          }
         }}
       >
         {hasChildren ? (
-          <button className="w-4 h-4 flex items-center justify-center">
+          <button
+            className="w-4 h-4 flex items-center justify-center"
+            onClick={(e) => {
+              e.stopPropagation() // Prevent parent click
+              setIsExpanded(!isExpanded)
+            }}
+          >
             {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           </button>
         ) : (
