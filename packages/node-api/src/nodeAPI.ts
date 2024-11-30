@@ -88,6 +88,18 @@ export class NodeAPI {
     return response.data.moveMultipleNodePoints.map((node: NodePointData) => new NodePoint(node))
   }
 
+  async restoreNode(id: number): Promise<NodePoint> {
+    const mutation = `
+      mutation($id: Int!) {
+        restoreNodePoint(id: $id) {
+          id parent title description data version deleted
+        }
+      }
+    `
+    const response = await this.graphqlRequest(mutation, { id })
+    return new NodePoint(response.data.restoreNodePoint)
+  }
+
   private buildNodeTree(flatNodes: NodePointData[]): NodePoint[] {
     const nodeMap = new Map<number, NodePoint>()
     const rootNodes: NodePoint[] = []

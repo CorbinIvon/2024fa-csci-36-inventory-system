@@ -38,6 +38,12 @@ export default function Home() {
     await loadNodes()
   }
 
+  async function handleNodeRestore() {
+    if (!selectedNode?.id) return
+    await nodeApi.restoreNode(selectedNode.id)
+    await loadNodes()
+  }
+
   return (
     <main className="flex min-h-screen">
       <div className="w-1/3 border-r p-4">
@@ -68,7 +74,7 @@ export default function Home() {
               onDelete={handleNodeDelete}
             />
           ) : (
-            <NodeDisplay node={selectedNode} onEditClick={() => setIsEditing(true)} />
+            <NodeDisplay node={selectedNode} onEditClick={() => setIsEditing(true)} onRestore={handleNodeRestore} />
           ))}
       </div>
     </main>

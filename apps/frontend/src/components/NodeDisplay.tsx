@@ -4,14 +4,24 @@ import { Edit2 } from 'lucide-react'
 interface NodeDisplayProps {
   node: NodePoint | null
   onEditClick: () => void
+  onRestore?: () => void
 }
 
-export function NodeDisplay({ node, onEditClick }: NodeDisplayProps) {
+export function NodeDisplay({ node, onEditClick, onRestore }: NodeDisplayProps) {
   if (!node) return null
 
   return (
     <div className="p-4 border rounded-lg">
-      {node.deleted && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">This node has been deleted</div>}
+      {node.deleted && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded flex justify-between items-center">
+          <span>This node has been deleted</span>
+          {onRestore && (
+            <button onClick={onRestore} className="px-3 py-1 bg-red-200 hover:bg-red-300 rounded-full text-sm">
+              Restore
+            </button>
+          )}
+        </div>
+      )}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">{node.title}</h2>
         <button onClick={onEditClick} className="p-2 hover:bg-gray-100 rounded-full" title="Edit node">

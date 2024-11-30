@@ -204,6 +204,38 @@ const Mutation = new GraphQLObjectType({
         return movedNodes
       },
     },
+    restoreNodePoint: {
+      type: NodePointType,
+      args: { id: { type: GraphQLInt } },
+      async resolve(_, { id }) {
+        const existingNode = await db.query(`SELECT * FROM nodePoint WHERE id = $1 AND deleted = TRUE`, [id])
+
+        if (existingNode.rows.length === 0) {
+          throw new Error(`NodePoint with id ${id} is not deleted or does not exist.`)
+        }
+
+        const node = existingNode.rows[0]
+
+        // Log the restoration to history
+        await db.query(
+          `INSERT INTO nodePointHistory (nodePointId, version, title, description, data, action)
+           VALUES ($1, $2, $3, $4, $5, 'restore')`,
+          [node.id, node.version, node.title, node.description, node.data],
+        )
+
+        // Restore the node
+        const result = await db.query(
+          `UPDATE nodePoint
+           SET deleted = FALSE,
+               version = version + 1
+           WHERE id = $1
+           RETURNING *`,
+          [id],
+        )
+
+        return result.rows[0]
+      },
+    },
   },
 })
 
