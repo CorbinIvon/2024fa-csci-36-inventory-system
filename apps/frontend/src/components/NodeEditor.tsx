@@ -23,6 +23,11 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
 
   return (
     <div className="p-4 border rounded-lg">
+      {node.deleted && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+          This node has been deleted. Saving will restore the node.
+        </div>
+      )}
       <h2 className="text-xl mb-4">Edit Node</h2>
       <form
         onSubmit={async (e) => {

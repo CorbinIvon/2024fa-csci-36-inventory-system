@@ -52,7 +52,6 @@ export default function Home() {
 
   async function handleNodeDelete() {
     if (!selectedNode?.id) return
-    if (!confirm('Are you sure you want to delete this node?')) return
 
     try {
       const deletedNode = await nodeApi.deleteNode(selectedNode.id)
@@ -96,6 +95,36 @@ export default function Home() {
     }
   }
 
+  async function handleContextDelete(nodeId: number) {
+    const nodeToDelete = findNodeById(nodes, nodeId)
+    if (!nodeToDelete) return
+
+    try {
+      const deletedNode = await nodeApi.deleteNode(nodeId)
+      // Update selected node without exiting edit mode
+      if (selectedNode?.id === nodeId) {
+        setSelectedNode(deletedNode)
+      }
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+    } catch (error) {
+      console.error('Failed to delete node:', error)
+    }
+  }
+
+  async function handleContextRestore(nodeId: number) {
+    try {
+      const restoredNode = await nodeApi.restoreNode(nodeId)
+      if (selectedNode?.id === nodeId) {
+        setSelectedNode(restoredNode)
+      }
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+    } catch (error) {
+      console.error('Failed to restore node:', error)
+    }
+  }
+
   return (
     <main className="flex min-h-screen">
       <div className="w-1/3 border-r p-4">
@@ -112,6 +141,8 @@ export default function Home() {
             setSelectedNode(node)
           }}
           onAddChild={handleAddNode}
+          onDelete={handleContextDelete}
+          onRestore={handleContextRestore}
         />
       </div>
       <div className="w-2/3 p-4">
@@ -124,7 +155,15 @@ export default function Home() {
               onDelete={handleNodeDelete}
             />
           ) : (
-            <NodeDisplay node={selectedNode} onEditClick={() => setIsEditing(true)} onRestore={handleNodeRestore} />
+            <NodeDisplay
+              node={selectedNode}
+              onEditClick={() => {
+                if (!selectedNode.deleted) {
+                  setIsEditing(true)
+                }
+              }}
+              onRestore={handleNodeRestore}
+            />
           ))}
       </div>
     </main>

@@ -8,15 +8,19 @@ interface NodeTreeProps {
   nodes: NodePoint[]
   onNodeSelect?: (nodeId: string) => void
   onAddChild?: (parentId: number) => void
+  onDelete?: (nodeId: number) => void
+  onRestore?: (nodeId: number) => void
 }
 
 interface TreeNodeProps {
   node: NodePoint
   onSelect?: (nodeId: string) => void
   onAddChild?: (parentId: number) => void
+  onDelete?: (nodeId: number) => void
+  onRestore?: (nodeId: number) => void
 }
 
-function TreeNode({ node, onSelect, onAddChild }: TreeNodeProps) {
+function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const hasChildren = node.children && node.children.length > 0
@@ -31,9 +35,7 @@ function TreeNode({ node, onSelect, onAddChild }: TreeNodeProps) {
         }}
         onContextMenu={(e) => {
           e.preventDefault()
-          if (!node.deleted) {
-            setContextMenu({ x: e.clientX, y: e.clientY })
-          }
+          setContextMenu({ x: e.clientX, y: e.clientY })
         }}
       >
         {/* Icon container with fixed width */}
@@ -65,15 +67,31 @@ function TreeNode({ node, onSelect, onAddChild }: TreeNodeProps) {
           y={contextMenu.y}
           onClose={() => setContextMenu(null)}
           onNewNode={() => {
-            if (onAddChild) onAddChild(node.id!)
+            if (onAddChild && node.id) onAddChild(node.id)
             setContextMenu(null)
           }}
+          onDelete={() => {
+            if (onDelete && node.id) onDelete(node.id)
+            setContextMenu(null)
+          }}
+          onRestore={() => {
+            if (onRestore && node.id) onRestore(node.id)
+            setContextMenu(null)
+          }}
+          isDeleted={node.deleted}
         />
       )}
       {isExpanded && hasChildren && (
         <div className="ml-4 border-l border-gray-200">
           {node.children.map((child) => (
-            <TreeNode key={child.id} node={child} onSelect={onSelect} onAddChild={onAddChild} />
+            <TreeNode
+              key={child.id}
+              node={child}
+              onSelect={onSelect}
+              onAddChild={onAddChild}
+              onDelete={onDelete}
+              onRestore={onRestore}
+            />
           ))}
         </div>
       )}
@@ -81,14 +99,21 @@ function TreeNode({ node, onSelect, onAddChild }: TreeNodeProps) {
   )
 }
 
-export function NodeTree({ nodes, onNodeSelect, onAddChild }: NodeTreeProps) {
+export function NodeTree({ nodes, onNodeSelect, onAddChild, onDelete, onRestore }: NodeTreeProps) {
   return (
     <NavigationMenu.Root className="relative">
       <NavigationMenu.List className="m-0 p-0 list-none">
         {nodes
           .filter((n) => !n.parent)
           .map((node) => (
-            <TreeNode key={node.id} node={node} onSelect={onNodeSelect} onAddChild={onAddChild} />
+            <TreeNode
+              key={node.id}
+              node={node}
+              onSelect={onNodeSelect}
+              onAddChild={onAddChild}
+              onDelete={onDelete}
+              onRestore={onRestore}
+            />
           ))}
       </NavigationMenu.List>
     </NavigationMenu.Root>

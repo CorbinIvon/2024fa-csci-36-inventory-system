@@ -12,21 +12,21 @@ export function NodeDisplay({ node, onEditClick, onRestore }: NodeDisplayProps) 
 
   return (
     <div className="p-4 border rounded-lg">
-      {node.deleted && (
+      {node.deleted && onRestore && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded flex justify-between items-center">
           <span>This node has been deleted</span>
-          {onRestore && (
-            <button onClick={onRestore} className="px-3 py-1 bg-red-200 hover:bg-red-300 rounded-full text-sm">
-              Restore
-            </button>
-          )}
+          <button onClick={onRestore} className="px-3 py-1 bg-red-200 hover:bg-red-300 rounded-full text-sm">
+            Restore
+          </button>
         </div>
       )}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">{node.title}</h2>
-        <button onClick={onEditClick} className="p-2 hover:bg-gray-100 rounded-full" title="Edit node">
-          <Edit2 size={20} />
-        </button>
+        {!node.deleted && (
+          <button onClick={onEditClick} className="p-2 hover:bg-gray-100 rounded-full" title="Edit node">
+            <Edit2 size={20} />
+          </button>
+        )}
       </div>
       <div className="space-y-4">
         <div>
