@@ -4,17 +4,18 @@ import { NodeAPI } from '@repo/node-api/src/nodeAPI'
 import { NodePoint } from '@repo/node-api/src/nodePoint'
 import { NodeTree } from '../components/NodeTree'
 import { NodeEditor } from '../components/NodeEditor'
-import * as NavigationMenu from '@radix-ui/react-navigation-menu'
+import { NodeDisplay } from '../components/NodeDisplay'
 import { Search } from 'lucide-react'
 
 export default function Home() {
   const [nodeApi] = useState(() => new NodeAPI())
   const [nodes, setNodes] = useState<NodePoint[]>([])
   const [selectedNode, setSelectedNode] = useState<NodePoint | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     loadNodes()
-  }, [])
+  })
 
   async function loadNodes() {
     const fetchedNodes = await nodeApi.fetchAll()
@@ -46,7 +47,18 @@ export default function Home() {
         />
       </div>
       <div className="w-2/3 p-4">
-        <NodeEditor node={selectedNode} onSave={handleNodeUpdate} />
+        {selectedNode &&
+          (isEditing ? (
+            <NodeEditor
+              node={selectedNode}
+              onSave={async (data) => {
+                await handleNodeUpdate(data)
+                setIsEditing(false)
+              }}
+            />
+          ) : (
+            <NodeDisplay node={selectedNode} onEditClick={() => setIsEditing(true)} />
+          ))}
       </div>
     </main>
   )
