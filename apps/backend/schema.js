@@ -38,7 +38,8 @@ const RootQuery = new GraphQLObjectType({
     fetchAll: {
       type: new GraphQLList(NodePointType),
       async resolve() {
-        const result = await db.query('SELECT * FROM nodePoint WHERE deleted = FALSE')
+        // const result = await db.query('SELECT * FROM nodePoint WHERE deleted = FALSE')
+        const result = await db.query('SELECT * FROM nodePoint')
         return result.rows
       },
     },

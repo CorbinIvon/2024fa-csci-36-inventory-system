@@ -29,6 +29,15 @@ export default function Home() {
     await loadNodes()
   }
 
+  async function handleNodeDelete() {
+    if (!selectedNode?.id) return
+    if (!confirm('Are you sure you want to delete this node?')) return
+
+    await nodeApi.deleteNode(selectedNode.id)
+    setSelectedNode(null)
+    await loadNodes()
+  }
+
   return (
     <main className="flex min-h-screen">
       <div className="w-1/3 border-r p-4">
@@ -55,6 +64,8 @@ export default function Home() {
                 await handleNodeUpdate(data)
                 setIsEditing(false)
               }}
+              onCancel={() => setIsEditing(false)}
+              onDelete={handleNodeDelete}
             />
           ) : (
             <NodeDisplay node={selectedNode} onEditClick={() => setIsEditing(true)} />

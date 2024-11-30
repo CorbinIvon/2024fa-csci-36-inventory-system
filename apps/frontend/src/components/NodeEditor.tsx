@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react'
 interface NodeEditorProps {
   node: NodePoint | null
   onSave: (data: Partial<NodePointData>) => Promise<void>
+  onCancel: () => void
+  onDelete: () => void
 }
 
-export function NodeEditor({ node, onSave }: NodeEditorProps) {
+export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
@@ -46,9 +48,25 @@ export function NodeEditor({ node, onSave }: NodeEditorProps) {
               className="w-full p-2 border rounded"
             />
           </div>
-          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
-            Save
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              className="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 ml-auto"
+            >
+              Delete Node
+            </button>
+          </div>
         </div>
       </form>
     </div>
