@@ -22,6 +22,17 @@ export default function Home() {
     setNodes(fetchedNodes)
   }
 
+  function findNodeById(nodes: NodePoint[], id: number): NodePoint | null {
+    for (const node of nodes) {
+      if (node.id === id) return node
+      if (node.children.length > 0) {
+        const found = findNodeById(node.children, id)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
   async function handleNodeUpdate(data: Partial<NodePoint>) {
     if (!selectedNode?.id) return
 
@@ -66,8 +77,8 @@ export default function Home() {
         <NodeTree
           nodes={nodes}
           onNodeSelect={(id) => {
-            const node = nodes.find((n) => n.id === parseInt(id))
-            setSelectedNode(node || null)
+            const node = findNodeById(nodes, parseInt(id))
+            setSelectedNode(node)
           }}
         />
       </div>
