@@ -4,7 +4,6 @@
   "private": true,
   "exports": {
     "nodePoint": "./src/nodePoint.ts",
-    "nodeData": "./src/nodeData.ts",
     "nodeAPI": "./src/nodeAPI.ts"
   },
   "scripts": {
