@@ -25,8 +25,18 @@ export default function Home() {
   async function handleNodeUpdate(data: Partial<NodePoint>) {
     if (!selectedNode?.id) return
 
-    await nodeApi.updateNode(selectedNode.id, data)
-    await loadNodes()
+    try {
+      const updatedNode = await nodeApi.updateNode(selectedNode.id, data)
+      // Update the selected node with the API response
+      setSelectedNode(updatedNode)
+      // Refresh the tree
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Failed to update node:', error)
+      // Optionally handle error state here
+    }
   }
 
   async function handleNodeDelete() {
@@ -66,10 +76,7 @@ export default function Home() {
           (isEditing ? (
             <NodeEditor
               node={selectedNode}
-              onSave={async (data) => {
-                await handleNodeUpdate(data)
-                setIsEditing(false)
-              }}
+              onSave={handleNodeUpdate}
               onCancel={() => setIsEditing(false)}
               onDelete={handleNodeDelete}
             />
