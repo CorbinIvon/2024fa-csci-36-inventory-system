@@ -80,6 +80,22 @@ export default function Home() {
     }
   }
 
+  async function handleAddNode(parentId: number) {
+    try {
+      const newNode = await nodeApi.createNode({
+        parent: parentId,
+        title: 'New Node',
+        description: '',
+      })
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+      setSelectedNode(newNode)
+      setIsEditing(true)
+    } catch (error) {
+      console.error('Failed to create node:', error)
+    }
+  }
+
   return (
     <main className="flex min-h-screen">
       <div className="w-1/3 border-r p-4">
@@ -95,6 +111,7 @@ export default function Home() {
             const node = findNodeById(nodes, parseInt(id))
             setSelectedNode(node)
           }}
+          onAddChild={handleAddNode}
         />
       </div>
       <div className="w-2/3 p-4">

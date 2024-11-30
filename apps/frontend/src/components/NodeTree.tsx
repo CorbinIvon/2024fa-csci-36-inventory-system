@@ -2,14 +2,23 @@ import { NodePoint } from '@repo/node-api/src/nodePoint'
 import { useState } from 'react'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { ChevronRight, ChevronDown, Folder, File } from 'lucide-react'
+import { ContextMenu } from './ContextMenu'
 
 interface NodeTreeProps {
   nodes: NodePoint[]
   onNodeSelect?: (nodeId: string) => void
+  onAddChild?: (parentId: number) => void
 }
 
-function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: string) => void }) {
+interface TreeNodeProps {
+  node: NodePoint
+  onSelect?: (nodeId: string) => void
+  onAddChild?: (parentId: number) => void
+}
+
+function TreeNode({ node, onSelect, onAddChild }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const hasChildren = node.children && node.children.length > 0
 
   return (
@@ -19,6 +28,12 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
           ${node.deleted ? 'opacity-50 italic' : ''}`}
         onClick={(e) => {
           if (onSelect) onSelect(node.id!.toString())
+        }}
+        onContextMenu={(e) => {
+          e.preventDefault()
+          if (!node.deleted) {
+            setContextMenu({ x: e.clientX, y: e.clientY })
+          }
         }}
       >
         {/* Icon container with fixed width */}
@@ -44,10 +59,21 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
           {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
         </span>
       </div>
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+          onNewNode={() => {
+            if (onAddChild) onAddChild(node.id!)
+            setContextMenu(null)
+          }}
+        />
+      )}
       {isExpanded && hasChildren && (
         <div className="ml-4 border-l border-gray-200">
           {node.children.map((child) => (
-            <TreeNode key={child.id} node={child} onSelect={onSelect} />
+            <TreeNode key={child.id} node={child} onSelect={onSelect} onAddChild={onAddChild} />
           ))}
         </div>
       )}
@@ -55,14 +81,14 @@ function TreeNode({ node, onSelect }: { node: NodePoint; onSelect?: (nodeId: str
   )
 }
 
-export function NodeTree({ nodes, onNodeSelect }: NodeTreeProps) {
+export function NodeTree({ nodes, onNodeSelect, onAddChild }: NodeTreeProps) {
   return (
     <NavigationMenu.Root className="relative">
       <NavigationMenu.List className="m-0 p-0 list-none">
         {nodes
           .filter((n) => !n.parent)
           .map((node) => (
-            <TreeNode key={node.id} node={node} onSelect={onNodeSelect} />
+            <TreeNode key={node.id} node={node} onSelect={onNodeSelect} onAddChild={onAddChild} />
           ))}
       </NavigationMenu.List>
     </NavigationMenu.Root>
