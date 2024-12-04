@@ -1,0 +1,22 @@
+{
+  "name": "graphql-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build-test.js",
+    "start": "node index.js",
+    "dev": "docker-compose up -d && node index.js",
+    "clean": "docker-compose down -v"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.1",
+    "graphql": "^16.9.0",
+    "graphql-type-json": "^0.3.2",
+    "graphql-yoga": "^5.10.3",
+    "pg": "^8.13.1"
+  }
+}

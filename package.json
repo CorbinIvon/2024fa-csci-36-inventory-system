@@ -7,24 +7,27 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@10.8.3",
+  "workspaces": [
+    "apps/frontend/",
+    "apps/backend/",
+    "packages/*"
+  ],
   "devDependencies": {
     "@types/react": "^18.3.12",
     "prettier": "^3.2.5",
     "turbo": "^2.2.3",
     "typescript": "5.5.4"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "npm@10.8.3",
-  "workspaces": [
-    "apps/frontend/*",
-    "packages/*"
-  ],
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
-    "@mui/material": "^5.15.0",
-    "@mui/icons-material": "^5.15.0"
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-navigation-menu": "^1.2.1",
+    "glob": "^11.0.0",
+    "lucide-react": "^0.462.0",
+    "react-complex-tree": "^2.4.6",
+    "sass": "^1.81.0"
   }
 }

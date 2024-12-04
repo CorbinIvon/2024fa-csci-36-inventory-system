@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "nodeData": "./src/nodeData.ts",
+    "nodePoint": "./src/nodePoint.ts",
     "nodeAPI": "./src/nodeAPI.ts"
   },
   "scripts": {

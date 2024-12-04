@@ -1,11 +1,16 @@
 # Quickstart - Frontend
 
+Download Docker-Desktop from [Docker](https://www.docker.com/products/docker-desktop) and install it.
+
 ```bash
 git clone git@github.com:CorbinIvon/2024fa-csci-36-inventory-system.git
 cd 2024fa-csci-36-inventory-system
 npm install turbo --global
 npm install
-turbo run dev
+cd apps/backend
+docker-compose up -d
+cd ../../
+turbo dev
 ```
 
 # Turborepo starter

@@ -1,11 +1,3 @@
-`npm i`
-`node index.js`
-
-# Manual Docker Running.
-
-`docker exec -it inventory_postgres psql -U admin -d inventory_db`
-
-```
 CREATE TABLE nodePoint (
     id SERIAL PRIMARY KEY,
     parent INTEGER REFERENCES nodePoint(id) ON DELETE CASCADE,
@@ -26,5 +18,3 @@ CREATE TABLE nodePointHistory (
     action VARCHAR(10) NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
-
-```
