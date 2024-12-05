@@ -75,7 +75,14 @@ export function SearchBar({ onSearch, nodes, onNodeSelect }: SearchBarProps) {
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="flex-grow font-medium">{node.title}</span>
-                {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
+                {Object.keys(node.data || {}).length > 0 && (
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600 truncate max-w-[100px]">
+                    {JSON.stringify(node.data)}
+                  </span>
+                )}
+                {node.deleted && (
+                  <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded shrink-0">Deleted</span>
+                )}
               </div>
               {node.description && <p className="text-sm text-gray-500 truncate mt-0.5">{node.description}</p>}
             </button>
