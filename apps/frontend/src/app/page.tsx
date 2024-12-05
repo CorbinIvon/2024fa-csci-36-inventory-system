@@ -150,21 +150,12 @@ export default function Home() {
         <div className="mb-4">
           <SearchBar
             nodes={nodes}
-            onSearch={(results) => {
-              // Don't modify the original nodes when showing search results
-              setFilteredNodes(
-                results.map((node) => ({
-                  ...node,
-                  children: [],
-                  addChild: node.addChild,
-                  removeChild: node.removeChild,
-                  update: node.update,
-                })),
-              )
-            }}
+            onSearch={setFilteredNodes}
             onNodeSelect={(id) => {
               const node = findNodeById(nodes, parseInt(id))
               setSelectedNode(node)
+              // Keep the original tree structure
+              setFilteredNodes(nodes)
             }}
           />
         </div>

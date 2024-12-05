@@ -42,7 +42,8 @@ export function SearchBar({ onSearch, nodes, onNodeSelect }: SearchBarProps) {
     nodes.forEach((node) => searchInNode(node))
 
     setSearchResults(flattenedResults)
-    onSearch(flattenedResults)
+    // Keep the tree structure in the main view
+    onSearch(nodes)
   }
 
   return (
@@ -68,12 +69,15 @@ export function SearchBar({ onSearch, nodes, onNodeSelect }: SearchBarProps) {
                 setSearchTerm('')
                 setSearchResults([])
               }}
-              className={`w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2
+              className={`w-full px-4 py-2 text-left hover:bg-gray-100
                 ${node.deleted ? 'italic text-gray-500' : ''}
               `}
             >
-              <span className="flex-grow">{node.title}</span>
-              {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex-grow font-medium">{node.title}</span>
+                {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
+              </div>
+              {node.description && <p className="text-sm text-gray-500 truncate mt-0.5">{node.description}</p>}
             </button>
           ))}
         </div>
