@@ -6,6 +6,7 @@ import { NodeTree } from '../components/NodeTree'
 import { NodeEditor } from '../components/NodeEditor'
 import { NodeDisplay } from '../components/NodeDisplay'
 import { SearchBar } from '../components/SearchBar'
+import { Breadcrumb } from '../components/Breadcrumb'
 
 export default function Home() {
   const [nodeApi] = useState(() => new NodeAPI())
@@ -172,25 +173,38 @@ export default function Home() {
         />
       </div>
       <div className="w-2/3 p-4">
-        {selectedNode &&
-          (isEditing ? (
-            <NodeEditor
-              node={selectedNode}
-              onSave={handleNodeUpdate}
-              onCancel={() => setIsEditing(false)}
-              onDelete={handleNodeDelete}
-            />
-          ) : (
-            <NodeDisplay
-              node={selectedNode}
-              onEditClick={() => {
-                if (!selectedNode.deleted) {
-                  setIsEditing(true)
-                }
-              }}
-              onRestore={handleNodeRestore}
-            />
-          ))}
+        {selectedNode && (
+          <>
+            <div className="mb-4">
+              <Breadcrumb
+                nodes={nodes}
+                selectedNodeId={selectedNode.id}
+                onNodeClick={(nodeId) => {
+                  const node = findNodeById(nodes, nodeId)
+                  setSelectedNode(node)
+                }}
+              />
+            </div>
+            {isEditing ? (
+              <NodeEditor
+                node={selectedNode}
+                onSave={handleNodeUpdate}
+                onCancel={() => setIsEditing(false)}
+                onDelete={handleNodeDelete}
+              />
+            ) : (
+              <NodeDisplay
+                node={selectedNode}
+                onEditClick={() => {
+                  if (!selectedNode.deleted) {
+                    setIsEditing(true)
+                  }
+                }}
+                onRestore={handleNodeRestore}
+              />
+            )}
+          </>
+        )}
       </div>
     </main>
   )
