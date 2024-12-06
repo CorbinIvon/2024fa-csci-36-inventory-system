@@ -88,7 +88,7 @@ const Mutation = new GraphQLObjectType({
       async resolve(_, { parent, title, description, data }) {
         try {
           const result = await db.query(
-            `INSERT INTO nodePoint (parent, title, description, data) 
+            `INSERT INTO nodePoint (parent, title, description, data)
              VALUES ($1, $2, $3, $4) RETURNING *`,
             [parent, title, description, data],
           )
@@ -180,8 +180,29 @@ const Mutation = new GraphQLObjectType({
       },
       async resolve(_, { newParent, nodeIds }) {
         const movedNodes = []
+
+        // Get the ancestors of newParent
+        const ancestorsResult = await db.query(
+          `WITH RECURSIVE ancestors AS (
+         SELECT id, parent FROM nodePoint WHERE id = $1 AND deleted = FALSE
+         UNION ALL
+         SELECT np.id, np.parent FROM nodePoint np
+         INNER JOIN ancestors a ON np.id = a.parent
+         WHERE np.deleted = FALSE
+       )
+       SELECT id FROM ancestors`,
+          [newParent],
+        )
+        const ancestorIds = ancestorsResult.rows.map((row) => row.id)
+
         for (const id of nodeIds) {
           try {
+            // Check if newParent is a descendant of the node being moved
+            if (ancestorIds.includes(id)) {
+              throw new Error(`Cannot move node ${id} under its own descendant ${newParent}.`)
+            }
+
+            //Move the node
             const result = await db.query(
               `UPDATE nodePoint
                SET parent = $1
