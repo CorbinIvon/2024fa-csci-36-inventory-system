@@ -20,9 +20,10 @@ interface TreeNodeProps {
   onDelete?: (nodeId: number) => void
   onRestore?: (nodeId: number) => void
   onMoveNode?: (nodeId: number, newParentId: number) => void
+  rootNodes: NodePoint[]
 }
 
-function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode }: TreeNodeProps) {
+function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode, rootNodes }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -94,7 +95,7 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode 
         <div className="w-6 flex justify-center">
           {hasChildren ? (
             <button
-              className={`p-0 w-6 h-6 inline-flex items-center justify-center transition-transform duration-200 
+              className={`p-0 w-6 h-6 inline-flex items-center justify-center transition-transform duration-200
                 hover:text-gray-700 text-gray-500 bg-transparent
                 ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
               onClick={(e) => {
@@ -130,6 +131,13 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode 
             if (onRestore && node.id) onRestore(node.id)
             setContextMenu(null)
           }}
+          onMove={(targetNodeId) => {
+            if (onMoveNode && node.id) {
+              onMoveNode(node.id, targetNodeId)
+            }
+          }}
+          nodes={rootNodes} // Pass the complete tree here
+          currentNodeId={node.id}
           isDeleted={node.deleted}
         />
       )}
@@ -144,6 +152,7 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode 
               onDelete={onDelete}
               onRestore={onRestore}
               onMoveNode={onMoveNode}
+              rootNodes={rootNodes} // Pass down the complete tree
             />
           ))}
         </div>
@@ -167,6 +176,7 @@ export function NodeTree({ nodes, onNodeSelect, onAddChild, onDelete, onRestore,
               onDelete={onDelete}
               onRestore={onRestore}
               onMoveNode={onMoveNode}
+              rootNodes={nodes} // Pass the complete tree here
             />
           ))}
       </NavigationMenu.List>
