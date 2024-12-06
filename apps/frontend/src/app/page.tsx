@@ -5,21 +5,23 @@ import { NodePoint } from '@repo/node-api/src/nodePoint'
 import { NodeTree } from '../components/NodeTree'
 import { NodeEditor } from '../components/NodeEditor'
 import { NodeDisplay } from '../components/NodeDisplay'
-import { Search } from 'lucide-react'
+import { SearchBar } from '../components/SearchBar'
 
 export default function Home() {
   const [nodeApi] = useState(() => new NodeAPI())
   const [nodes, setNodes] = useState<NodePoint[]>([])
   const [selectedNode, setSelectedNode] = useState<NodePoint | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [filteredNodes, setFilteredNodes] = useState<NodePoint[]>([])
 
   useEffect(() => {
     loadNodes()
-  })
+  }, [])
 
   async function loadNodes() {
     const fetchedNodes = await nodeApi.fetchAll()
     setNodes(fetchedNodes)
+    setFilteredNodes(fetchedNodes)
   }
 
   function findNodeById(nodes: NodePoint[], id: number): NodePoint | null {
@@ -43,6 +45,7 @@ export default function Home() {
       // Refresh the tree
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
       setIsEditing(false)
     } catch (error) {
       console.error('Failed to update node:', error)
@@ -59,6 +62,7 @@ export default function Home() {
       setSelectedNode(deletedNode) // Keep the node selected but now marked as deleted
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
     } catch (error) {
       console.error('Failed to delete node:', error)
     }
@@ -74,6 +78,7 @@ export default function Home() {
       // Refresh the tree
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
     } catch (error) {
       console.error('Failed to restore node:', error)
     }
@@ -88,6 +93,7 @@ export default function Home() {
       })
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
       setSelectedNode(newNode)
       setIsEditing(true)
     } catch (error) {
@@ -107,6 +113,7 @@ export default function Home() {
       }
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
     } catch (error) {
       console.error('Failed to delete node:', error)
     }
@@ -120,6 +127,7 @@ export default function Home() {
       }
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
     } catch (error) {
       console.error('Failed to restore node:', error)
     }
@@ -130,6 +138,7 @@ export default function Home() {
       await nodeApi.moveNodes([nodeId], newParentId)
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
     } catch (error) {
       console.error('Failed to move node:', error)
     }
@@ -139,13 +148,19 @@ export default function Home() {
     <main className="flex min-h-screen">
       <div className="w-1/3 border-r p-4">
         <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <input type="text" placeholder="Search nodes..." className="pl-10 pr-4 py-2 w-full border rounded" />
-          </div>
+          <SearchBar
+            nodes={nodes}
+            onSearch={setFilteredNodes}
+            onNodeSelect={(id) => {
+              const node = findNodeById(nodes, parseInt(id))
+              setSelectedNode(node)
+              // Keep the original tree structure
+              setFilteredNodes(nodes)
+            }}
+          />
         </div>
         <NodeTree
-          nodes={nodes}
+          nodes={filteredNodes}
           onNodeSelect={(id) => {
             const node = findNodeById(nodes, parseInt(id))
             setSelectedNode(node)
