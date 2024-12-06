@@ -40,20 +40,26 @@ export function Breadcrumb({ nodes, selectedNodeId, onNodeClick }: BreadcrumbPro
   const path = buildPath(selectedNodeId)
 
   return (
-    <div className="flex items-center space-x-2 text-sm text-gray-600">
-      {path.map((node, index) => (
-        <div key={node.id} className="flex items-center">
-          {index > 0 && <ChevronRight size={16} className="mx-2 text-gray-400" />}
-          <button
-            onClick={() => onNodeClick(node.id!)}
-            className={`hover:text-blue-600 ${node.deleted ? 'italic text-gray-400' : ''} ${
-              node.id === selectedNodeId ? 'font-medium text-gray-900' : ''
-            }`}
-          >
-            {node.title}
-          </button>
+    <div className="relative group">
+      <div className="overflow-x-auto scrollbar-none">
+        <div className="flex items-center space-x-2 text-sm text-gray-600 whitespace-nowrap py-1">
+          {path.map((node, index) => (
+            <div key={node.id} className="flex items-center shrink-0">
+              {index > 0 && <ChevronRight size={16} className="mx-2 text-gray-400 shrink-0" />}
+              <button
+                onClick={() => onNodeClick(node.id!)}
+                className={`hover:text-blue-600 truncate max-w-[200px] ${
+                  node.deleted ? 'italic text-gray-400' : ''
+                } ${node.id === selectedNodeId ? 'font-medium text-gray-900' : ''}`}
+                title={node.title}
+              >
+                {node.title}
+              </button>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
   )
 }
