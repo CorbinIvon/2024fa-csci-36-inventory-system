@@ -7,6 +7,7 @@ import { NodeEditor } from '../components/NodeEditor'
 import { NodeDisplay } from '../components/NodeDisplay'
 import { SearchBar } from '../components/SearchBar'
 import { Breadcrumb } from '../components/Breadcrumb'
+import { Search, SquarePlus } from 'lucide-react'
 
 export default function Home() {
   const [nodeApi] = useState(() => new NodeAPI())
@@ -85,7 +86,7 @@ export default function Home() {
     }
   }
 
-  async function handleAddNode(parentId: number) {
+  async function handleAddNode(parentId: number | undefined) {
     try {
       const newNode = await nodeApi.createNode({
         parent: parentId,
@@ -173,7 +174,7 @@ export default function Home() {
         />
       </div>
       <div className="w-2/3 p-4">
-        {selectedNode && (
+        {selectedNode ? (
           <>
             <div className="mb-4">
               <Breadcrumb
@@ -200,10 +201,29 @@ export default function Home() {
                     setIsEditing(true)
                   }
                 }}
+                onAddClick={(parent) => {
+                  if (!selectedNode.deleted) {
+                    handleAddNode(parent)
+                  }
+                }}
                 onRestore={handleNodeRestore}
               />
             )}
           </>
+        ) : (
+          <div className="flex justify-center items-center h-full">
+            <div className="text-center">
+              <button
+                onClick={() => handleAddNode(undefined)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+                title="Add a node"
+              >
+                <SquarePlus size={20} />
+              </button>
+              <br />
+              Add a node
+            </div>
+          </div>
         )}
       </div>
     </main>
