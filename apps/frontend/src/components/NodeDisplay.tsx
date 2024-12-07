@@ -1,13 +1,14 @@
 import { NodePoint } from '@repo/node-api/src/nodePoint'
-import { Edit2 } from 'lucide-react'
+import { Edit2, SquarePlus } from 'lucide-react'
 
 interface NodeDisplayProps {
   node: NodePoint | null
   onEditClick: () => void
+  onAddClick: (parent: number | undefined) => void
   onRestore?: () => void
 }
 
-export function NodeDisplay({ node, onEditClick, onRestore }: NodeDisplayProps) {
+export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDisplayProps) {
   if (!node) return null
 
   return (
@@ -23,9 +24,18 @@ export function NodeDisplay({ node, onEditClick, onRestore }: NodeDisplayProps) 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">{node.title}</h2>
         {!node.deleted && (
-          <button onClick={onEditClick} className="p-2 hover:bg-gray-100 rounded-full" title="Edit node">
-            <Edit2 size={20} />
-          </button>
+          <div className="flex">
+            <button onClick={onEditClick} className="p-2 hover:bg-gray-100 rounded-full m-1" title="Edit node">
+              <Edit2 size={20} />
+            </button>
+            <button
+              onClick={() => onAddClick(node.id)}
+              className="p-2 hover:bg-gray-100 rounded-full m-1"
+              title="Add child"
+            >
+              <SquarePlus size={20} />
+            </button>
+          </div>
         )}
       </div>
       <div className="space-y-4">
