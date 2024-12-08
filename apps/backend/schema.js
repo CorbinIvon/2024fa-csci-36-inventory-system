@@ -1,4 +1,12 @@
-const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt, GraphQLBoolean, GraphQLSchema } = require('graphql')
+const {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLList,
+  GraphQLInt,
+  GraphQLBoolean,
+  GraphQLSchema,
+  GraphQLInputObjectType,
+} = require('graphql')
 const GraphQLJSON = require('graphql-type-json').default
 const db = require('./db')
 
@@ -28,6 +36,17 @@ const NodePointHistoryType = new GraphQLObjectType({
     data: { type: GraphQLJSON },
     action: { type: GraphQLString },
     timestamp: { type: GraphQLString },
+  },
+})
+
+// NodePointInput Type
+const NodePointInputType = new GraphQLInputObjectType({
+  name: 'NodePointInput',
+  fields: {
+    parent: { type: GraphQLInt },
+    title: { type: GraphQLString },
+    description: { type: GraphQLString },
+    data: { type: GraphQLJSON },
   },
 })
 
@@ -96,6 +115,41 @@ const Mutation = new GraphQLObjectType({
         } catch (error) {
           if (error.code === '23505') {
             // PostgreSQL unique constraint violation code
+            throw new Error('Duplicate name.')
+          }
+          throw new Error('An unexpected error occurred.')
+        }
+      },
+    },
+    addMultipleNodePoints: {
+      type: new GraphQLList(NodePointType),
+      args: {
+        nodes: { type: new GraphQLList(NodePointInputType) },
+      },
+      async resolve(_, { nodes }) {
+        if (!nodes || nodes.length === 0) return []
+
+        // Dynamically build the parameterized query
+        const values = []
+        const placeholders = nodes
+          .map((node, i) => {
+            const idx = i * 4
+            values.push(node.parent, node.title, node.description, node.data)
+            return `($${idx + 1}, $${idx + 2}, $${idx + 3}, $${idx + 4})`
+          })
+          .join(', ')
+
+        const query = `
+    INSERT INTO nodePoint (parent, title, description, data)
+    VALUES ${placeholders}
+    RETURNING *
+  `
+
+        try {
+          const result = await db.query(query, values)
+          return result.rows // returns all newly inserted NodePoints
+        } catch (error) {
+          if (error.code === '23505') {
             throw new Error('Duplicate name.')
           }
           throw new Error('An unexpected error occurred.')
