@@ -1,5 +1,7 @@
 import { NodePoint } from '@repo/node-api/src/nodePoint'
 import { Edit2, SquarePlus } from 'lucide-react'
+import { Button } from './Buttons/Button'
+import { ButtonRound } from './Buttons/ButtonRound'
 
 interface NodeDisplayProps {
   node: NodePoint | null
@@ -16,25 +18,17 @@ export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDi
       {node.deleted && onRestore && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded flex justify-between items-center">
           <span>This node has been deleted</span>
-          <button onClick={onRestore} className="px-3 py-1 bg-red-200 hover:bg-red-300 rounded-full text-sm">
+          <Button variant="primary" size="sm" onClick={onRestore}>
             Restore
-          </button>
+          </Button>
         </div>
       )}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">{node.title}</h2>
         {!node.deleted && (
-          <div className="flex">
-            <button onClick={onEditClick} className="p-2 hover:bg-gray-100 rounded-full m-1" title="Edit node">
-              <Edit2 size={20} />
-            </button>
-            <button
-              onClick={() => onAddClick(node.id)}
-              className="p-2 hover:bg-gray-100 rounded-full m-1"
-              title="Add child"
-            >
-              <SquarePlus size={20} />
-            </button>
+          <div className="flex gap-2">
+            <ButtonRound variant="ghost" icon={Edit2} onClick={onEditClick} title="Edit node" />
+            <ButtonRound variant="ghost" icon={SquarePlus} onClick={() => onAddClick(node.id)} title="Add child" />
           </div>
         )}
       </div>

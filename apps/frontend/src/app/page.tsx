@@ -8,6 +8,8 @@ import { NodeDisplay } from '../components/NodeDisplay'
 import { SearchBar } from '../components/SearchBar'
 import { Breadcrumb } from '../components/Breadcrumb'
 import { Search, SquarePlus } from 'lucide-react'
+import { Button } from '../components/Buttons/Button'
+import { ButtonRound } from '../components/Buttons/ButtonRound'
 
 export default function Home() {
   const [nodeApi] = useState(() => new NodeAPI())
@@ -162,13 +164,9 @@ export default function Home() {
           />
         </div>
         <div className="flex items-center gap-2 mb-4 p-2 border-y">
-          <button
-            onClick={() => handleAddNode(undefined)}
-            className="px-3 py-1.5 text-white rounded-md text-sm flex items-center gap-1"
-          >
-            <SquarePlus size={16} />
+          <Button variant="primary" icon={SquarePlus} onClick={() => handleAddNode(undefined)}>
             Add Root Node
-          </button>
+          </Button>
         </div>
         <NodeTree
           nodes={filteredNodes}
@@ -220,20 +218,18 @@ export default function Home() {
               />
             )}
           </>
-        ) : (
+        ) : nodes.length === 0 ? (
           <div className="flex justify-center items-center h-full">
             <div className="text-center">
-              <button
-                onClick={() => handleAddNode(undefined)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-                title="Add a node"
-              >
-                <SquarePlus size={20} />
-              </button>
-              <br />
-              Add a node
+              <h2 className="text-2xl font-semibold mb-4">Welcome!</h2>
+              <p className="text-gray-600 mb-6">Get started by creating your first node</p>
+              <Button variant="primary" icon={SquarePlus} onClick={() => handleAddNode(undefined)} className="w-full">
+                Add Root Node
+              </Button>
             </div>
           </div>
+        ) : (
+          <div className="flex justify-center items-center h-full text-gray-500">Select a node to view or edit</div>
         )}
       </div>
     </main>

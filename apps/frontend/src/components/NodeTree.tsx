@@ -4,6 +4,8 @@ import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { ChevronRight, ChevronDown, Folder, File, LucideIcon, SquarePlus } from 'lucide-react'
 import { ContextMenu } from './ContextMenu'
 import * as LucideIcons from 'lucide-react'
+import { Button } from './Buttons/Button'
+import { ButtonRound } from './Buttons/ButtonRound'
 
 interface NodeTreeProps {
   nodes: NodePoint[]
@@ -40,7 +42,7 @@ function TreeNode({
   selectedNodeId,
   isExpanded,
   onToggleExpand,
-  expandedNodes, // Add this prop
+  expandedNodes,
 }: TreeNodeProps) {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -145,17 +147,16 @@ function TreeNode({
         {/* Icon container with fixed width */}
         <div className="w-6 flex justify-center">
           {hasChildren ? (
-            <button
-              className={`p-0 w-6 h-6 inline-flex items-center justify-center transition-transform duration-200
-                hover:text-gray-700 text-gray-500 bg-transparent
-                ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
+            <ButtonRound
+              variant="ghost"
+              size="sm"
+              icon={ChevronRight}
+              className={`transform transition-transform ${isExpanded ? 'rotate-90' : ''}`}
               onClick={(e) => {
                 e.stopPropagation()
                 onToggleExpand(node.id!)
               }}
-            >
-              <ChevronRight size={14} />
-            </button>
+            />
           ) : null}
         </div>
         {/* Fixed width container for folder/file icon */}
@@ -216,15 +217,7 @@ function TreeNode({
   )
 }
 
-export function NodeTree({
-  nodes,
-  onNodeSelect,
-  onAddChild,
-  onDelete,
-  onRestore,
-  onMoveNode,
-  selectedNodeId,
-}: NodeTreeProps) {
+export function NodeTree({ nodes, ...props }: NodeTreeProps) {
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set())
   const [isDragOver, setIsDragOver] = useState(false)
 
@@ -242,11 +235,11 @@ export function NodeTree({
 
   // Expand path to selected node
   useEffect(() => {
-    if (selectedNodeId) {
-      const path = findPathToNode(selectedNodeId, nodes)
+    if (props.selectedNodeId) {
+      const path = findPathToNode(props.selectedNodeId, nodes)
       setExpandedNodes(new Set([...Array.from(expandedNodes), ...path]))
     }
-  }, [selectedNodeId, nodes])
+  }, [props.selectedNodeId, nodes])
 
   const handleToggleExpand = (nodeId: number) => {
     const newExpanded = new Set(expandedNodes)
@@ -273,7 +266,7 @@ export function NodeTree({
     const nodeId = parseInt(e.dataTransfer.getData('nodeId'))
     if (!isNaN(nodeId)) {
       // Pass undefined or null as newParent to make it a root node
-      onMoveNode?.(nodeId, 0)
+      props.onMoveNode?.(nodeId, 0)
     }
   }
 
@@ -291,13 +284,13 @@ export function NodeTree({
             <TreeNode
               key={node.id}
               node={node}
-              onSelect={onNodeSelect}
-              onAddChild={onAddChild}
-              onDelete={onDelete}
-              onRestore={onRestore}
-              onMoveNode={onMoveNode}
+              onSelect={props.onNodeSelect}
+              onAddChild={props.onAddChild}
+              onDelete={props.onDelete}
+              onRestore={props.onRestore}
+              onMoveNode={props.onMoveNode}
               rootNodes={nodes} // Pass the complete tree here
-              selectedNodeId={selectedNodeId}
+              selectedNodeId={props.selectedNodeId}
               isExpanded={expandedNodes.has(node.id!)}
               onToggleExpand={handleToggleExpand}
               expandedNodes={expandedNodes} // Pass this prop
@@ -305,13 +298,9 @@ export function NodeTree({
           ))}
       </NavigationMenu.List>
       <div className="mt-4 pt-4 border-t">
-        <button
-          onClick={() => onAddChild?.(undefined)}
-          className="w-full py-2 px-3 text-sm text-gray-600 hover:bg-gray-100 rounded-md flex items-center justify-center gap-2"
-        >
-          <SquarePlus size={16} />
+        <Button variant="primary" icon={SquarePlus} onClick={() => props.onAddChild?.(undefined)} className="w-full">
           Add Root Node
-        </button>
+        </Button>
       </div>
     </NavigationMenu.Root>
   )
