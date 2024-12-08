@@ -80,6 +80,25 @@ function TreeNode({
     }
   }
 
+  const renderCount = () => {
+    try {
+      const nodeData = node.data || {}
+      if ('count' in nodeData) {
+        const count = Number(nodeData.count)
+        if (!isNaN(count)) {
+          return (
+            <span className="ml-auto text-xs bg-[var(--secondary-color)] bg-opacity-10 px-2 py-0.5 rounded-full text-[var(--primary-color)] font-medium">
+              {count}
+            </span>
+          )
+        }
+      }
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
   const handleDragStart = (e: React.DragEvent) => {
     if (node.deleted) {
       e.preventDefault()
@@ -129,7 +148,7 @@ function TreeNode({
   return (
     <div className="pl-2" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
       <div
-        className={`flex items-center gap-2 p-1 rounded cursor-pointer transition-colors
+        className={`flex items-center gap-2 p-1 pr-3 rounded cursor-pointer transition-colors relative
           ${node.deleted ? 'opacity-50 italic' : 'hover:bg-[var(--secondary-color)] hover:bg-opacity-10'}
           ${isDragOver ? 'bg-[var(--secondary-color)] bg-opacity-5 border border-[var(--secondary-color)] border-opacity-20' : ''}
           ${
@@ -165,10 +184,13 @@ function TreeNode({
         </div>
         {/* Fixed width container for folder/file icon */}
         <div className="w-5 flex justify-center">{renderNodeIcon()}</div>
-        <span className="text-sm flex items-center gap-1 flex-grow">
-          {node.title}
-          {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
+        <span className="text-sm flex items-center gap-1 min-w-0 flex-grow pr-12">
+          <span className="truncate">{node.title}</span>
+          {node.deleted && (
+            <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded shrink-0">Deleted</span>
+          )}
         </span>
+        {renderCount() && <div className="absolute right-2 top-1/2 -translate-y-1/2">{renderCount()}</div>}
       </div>
       {contextMenu && (
         <ContextMenu
