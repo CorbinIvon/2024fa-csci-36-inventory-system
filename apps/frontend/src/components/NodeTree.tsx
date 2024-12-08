@@ -1,8 +1,9 @@
 import { NodePoint } from '@repo/node-api/src/nodePoint'
 import { useState, useEffect } from 'react'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
-import { ChevronRight, ChevronDown, Folder, File } from 'lucide-react'
+import { ChevronRight, ChevronDown, Folder, File, LucideIcon } from 'lucide-react'
 import { ContextMenu } from './ContextMenu'
+import * as LucideIcons from 'lucide-react'
 
 interface NodeTreeProps {
   nodes: NodePoint[]
@@ -44,6 +45,38 @@ function TreeNode({
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const hasChildren = node.children && node.children.length > 0
+
+  const renderNodeIcon = () => {
+    try {
+      const nodeData = node.data || {}
+      const iconValue = (nodeData.icon || nodeData.Icon || '').toString()
+
+      // First check if it's a Lucide icon name
+      if (iconValue && iconValue in LucideIcons) {
+        // Safe access to icon component using type assertion
+        const IconComponent = (LucideIcons as any)[iconValue] as typeof Folder
+        return <IconComponent size={16} />
+      }
+
+      // Then check if it's a text/emoji that should be rendered directly
+      if (iconValue) {
+        // If it's longer than 3 characters and not an emoji, truncate it
+        const isEmoji = /\p{Emoji}/u.test(iconValue)
+        if (!isEmoji && iconValue.length > 3) {
+          return <span className="text-sm font-medium">{iconValue.substring(0, 3)}</span>
+        }
+        return <span className="text-sm font-medium">{iconValue}</span>
+      }
+
+      // Fallback to default icons
+      const DefaultIcon = hasChildren ? Folder : File
+      return <DefaultIcon size={16} />
+    } catch (error) {
+      console.warn(`Failed to render icon for node ${node.id}:`, error)
+      const DefaultIcon = hasChildren ? Folder : File
+      return <DefaultIcon size={16} />
+    }
+  }
 
   const handleDragStart = (e: React.DragEvent) => {
     if (node.deleted) {
@@ -125,7 +158,7 @@ function TreeNode({
           ) : null}
         </div>
         {/* Fixed width container for folder/file icon */}
-        <div className="w-5 flex justify-center">{hasChildren ? <Folder size={16} /> : <File size={16} />}</div>
+        <div className="w-5 flex justify-center">{renderNodeIcon()}</div>
         <span className="text-sm flex items-center gap-1 flex-grow">
           {node.title}
           {node.deleted && <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Deleted</span>}
