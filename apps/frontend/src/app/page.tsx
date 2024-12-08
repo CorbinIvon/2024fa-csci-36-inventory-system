@@ -161,6 +161,15 @@ export default function Home() {
             }}
           />
         </div>
+        <div className="flex items-center gap-2 mb-4 p-2 border-y">
+          <button
+            onClick={() => handleAddNode(undefined)}
+            className="px-3 py-1.5 text-white rounded-md text-sm flex items-center gap-1"
+          >
+            <SquarePlus size={16} />
+            Add Root Node
+          </button>
+        </div>
         <NodeTree
           nodes={filteredNodes}
           onNodeSelect={(id) => {
