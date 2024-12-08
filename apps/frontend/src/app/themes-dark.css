@@ -4,6 +4,7 @@
   --secondary-color: #e74c3c; /* Deep Pink */
   --background-color: #2b1a1a; /* Dark Red-Brown Background */
   --text-color: #f8e9e9; /* Soft Off-White for readability */
+  --text-color-hover: #ff6b6b;
 }
 
 /* Dark Mint Theme */
@@ -12,6 +13,7 @@
   --secondary-color: #1f8f4c; /* Dark Mint */
   --background-color: #143826; /* Deep Forest Green Background */
   --text-color: #eafaf1; /* Light Mint White for readability */
+  --text-color-hover: #2ecc71;
 }
 
 /* Dark Blueberry Theme */
@@ -20,6 +22,7 @@
   --secondary-color: #1a4f72; /* Dark Blue */
   --background-color: #102a43; /* Dark Navy Background */
   --text-color: #d6e4f0; /* Soft Blue-White for readability */
+  --text-color-hover: #3498db;
 }
 
 /* Dark Lemon Theme */
@@ -28,6 +31,7 @@
   --secondary-color: #a67c00; /* Dark Yellow */
   --background-color: #3a2e1e; /* Deep Brown Background */
   --text-color: #fff7e0; /* Soft Light Yellow for readability */
+  --text-color-hover: #f1c40f;
 }
 
 /* Dark Grape Theme */
@@ -36,6 +40,7 @@
   --secondary-color: #4a235a; /* Dark Purple */
   --background-color: #2c1a33; /* Deep Purple Background */
   --text-color: #ede7f6; /* Light Purple-White for readability */
+  --text-color-hover: #9b59b6;
 }
 
 /* Dark Chocolate Theme */
@@ -44,6 +49,7 @@
   --secondary-color: #3e2723; /* Dark Brown */
   --background-color: #1c0d0d; /* Rich Dark Chocolate Background */
   --text-color: #f3e5ab; /* Soft Cream for readability */
+  --text-color-hover: #8d6e63;
 }
 
 /* Dark Coconut Theme */
@@ -52,6 +58,7 @@
   --secondary-color: #8d8d8d; /* Dark Gray */
   --background-color: #2e2e2e; /* Deep Charcoal Background */
   --text-color: #ffffff; /* Bright White for contrast */
+  --text-color-hover: #e0e0e0;
 }
 
 /* Dark Orange Theme */
@@ -60,6 +67,7 @@
   --secondary-color: #a04000; /* Dark Burnt Orange */
   --background-color: #3b2100; /* Deep Orange-Brown Background */
   --text-color: #ffe6cc; /* Soft Light Orange for readability */
+  --text-color-hover: #ff7f50;
 }
 
 /* Dark Watermelon Theme */
@@ -68,6 +76,7 @@
   --secondary-color: #145a32; /* Dark Watermelon Rind Green */
   --background-color: #1f1f1f; /* Dark Charcoal Background */
   --text-color: #f5e6e8; /* Soft Pink-White for readability */
+  --text-color-hover: #ff5252;
 }
 
 /* Dark Peach Theme */
@@ -76,6 +85,7 @@
   --secondary-color: #a04000; /* Dark Peach Brown */
   --background-color: #3e2413; /* Deep Brown Background */
   --text-color: #f9e4d4; /* Soft Peach White for readability */
+  --text-color-hover: #ffb74d;
 }
 
 /* Dark Professional Slate Theme */
@@ -84,4 +94,5 @@
   --secondary-color: #37474f; /* Darker Slate */
   --background-color: #263238; /* Dark Slate Gray Background */
   --text-color: #eceff1; /* Light Blue-Gray for readability */
+  --text-color-hover: #90a4ae;
 }

@@ -163,11 +163,7 @@ export default function Home() {
             }}
           />
         </div>
-        <div className="flex items-center gap-2 mb-4 p-2 border-y">
-          <Button variant="primary" icon={SquarePlus} onClick={() => handleAddNode(undefined)}>
-            Add Root Node
-          </Button>
-        </div>
+        <div className="flex items-center gap-2 mb-4 p-2 border-b">{/* TODO: Add more context options here. */}</div>
         <NodeTree
           nodes={filteredNodes}
           onNodeSelect={(id) => {

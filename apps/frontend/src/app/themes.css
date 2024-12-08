@@ -4,6 +4,7 @@
   --secondary-color: #e74c3c;
   --background-color: #2c3e50;
   --text-color: #ecf0f1;
+  --text-color-hover: #ffffff;
 }
 
 /* Strawberry Theme */
@@ -12,6 +13,7 @@
   --secondary-color: #f1948a; /* Light Pink */
   --background-color: #fff0f3; /* Soft Pink Background */
   --text-color: #2e2e2e; /* Dark Charcoal for readability */
+  --text-color-hover: #c0392b;
 }
 
 /* Mint Theme */
@@ -20,6 +22,7 @@
   --secondary-color: #a9dfbf; /* Light Mint */
   --background-color: #e8f8f5; /* Soft Mint Background */
   --text-color: #1e1e1e; /* Dark Gray for readability */
+  --text-color-hover: #27ae60;
 }
 
 /* Blueberry Theme */
@@ -28,6 +31,7 @@
   --secondary-color: #85c1e9; /* Light Blue */
   --background-color: #ebf5fb; /* Soft Blue Background */
   --text-color: #1b2631; /* Deep Navy for contrast */
+  --text-color-hover: #2980b9;
 }
 
 /* Lemon Theme */
@@ -36,6 +40,7 @@
   --secondary-color: #f9e79f; /* Light Yellow */
   --background-color: #fef9e7; /* Soft Yellow Background */
   --text-color: #5d4037; /* Brown for contrast */
+  --text-color-hover: #d4ac0d;
 }
 
 /* Grape Theme */
@@ -44,6 +49,7 @@
   --secondary-color: #d2b4de; /* Light Purple */
   --background-color: #f5eef8; /* Soft Purple Background */
   --text-color: #2d3436; /* Dark Gray for contrast */
+  --text-color-hover: #6c3483;
 }
 
 /* Chocolate Theme */
@@ -52,6 +58,7 @@
   --secondary-color: #a0522d; /* Lighter Chocolate */
   --background-color: #f3e5ab; /* Creamy Background */
   --text-color: #1b1b1b; /* Deep Black for contrast */
+  --text-color-hover: #4e342e;
 }
 
 /* Coconut Theme */
@@ -60,6 +67,7 @@
   --secondary-color: #d5d5d5; /* Light Gray */
   --background-color: #ffffff; /* Bright White Background */
   --text-color: #3b3b3b; /* Dark Gray for contrast */
+  --text-color-hover: #2c2c2c;
 }
 
 /* Orange Theme */
@@ -68,6 +76,7 @@
   --secondary-color: #f5b041; /* Light Orange */
   --background-color: #fdf2e9; /* Soft Orange Background */
   --text-color: #2c2c2c; /* Charcoal for contrast */
+  --text-color-hover: #d35400;
 }
 
 /* Watermelon Theme */
@@ -76,6 +85,7 @@
   --secondary-color: #d1f2eb; /* Light Green for rind */
   --background-color: #fef5e7; /* Light Cream Background */
   --text-color: #34495e; /* Deep Blue for contrast */
+  --text-color-hover: #e74c3c;
 }
 
 /* Peach Theme */
@@ -84,4 +94,5 @@
   --secondary-color: #ffccbc; /* Light Peach */
   --background-color: #fff5eb; /* Soft Peach Background */
   --text-color: #3e2723; /* Deep Brown for readability */
+  --text-color-hover: #e67e22;
 }

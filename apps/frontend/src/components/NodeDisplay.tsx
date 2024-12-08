@@ -33,21 +33,23 @@ export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDi
         )}
       </div>
       <div className="space-y-4">
-        <div>
-          <label className="text-sm font-medium text-gray-500">ID</label>
-          <p>{node.id}</p>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">Parent ID</label>
-          <p>{node.parent || 'None'}</p>
+        <div className="inline-grid grid-cols-3 gap-x-6 text-xs">
+          <div>
+            <label className="font-medium text-gray-500">Parent ID</label>
+            <p>{node.parent || 'None'}</p>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500">ID</label>
+            <p>{node.id}</p>
+          </div>
+          <div>
+            <label className="font-medium text-gray-500">Version</label>
+            <p>{node.version}</p>
+          </div>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-500">Description</label>
           <p className="whitespace-pre-wrap">{node.description || 'No description'}</p>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">Version</label>
-          <p>{node.version}</p>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-500">Data</label>
