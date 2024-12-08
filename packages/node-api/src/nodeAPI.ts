@@ -42,25 +42,27 @@ export class NodeAPI {
 
   async createNode(data: NodePointData): Promise<NodePoint> {
     const mutation = `
-      mutation($parent: Int, $title: String!, $description: String, $data: JSON) {
-        addNodePoint(parent: $parent, title: $title, description: $description, data: $data) {
+      mutation($input: NodePointInput!) {
+        addNodePoint(input: $input) {
           id parent title description data version deleted
         }
       }
     `
-    const response = await this.graphqlRequest(mutation, data)
+    const response = await this.graphqlRequest(mutation, { input: data })
     return new NodePoint(response.data.addNodePoint)
   }
 
   async updateNode(id: number, data: Partial<NodePointData>): Promise<NodePoint> {
     const mutation = `
-      mutation($id: Int!, $title: String, $description: String, $data: JSON) {
-        updateNodePoint(id: $id, title: $title, description: $description, data: $data) {
+      mutation($input: UpdateNodePointInput!) {
+        updateNodePoint(input: $input) {
           id parent title description data version deleted
         }
       }
     `
-    const response = await this.graphqlRequest(mutation, { id, ...data })
+    const response = await this.graphqlRequest(mutation, {
+      input: { id, ...data },
+    })
     return new NodePoint(response.data.updateNodePoint)
   }
 
