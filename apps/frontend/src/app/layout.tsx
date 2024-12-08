@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   useEffect(() => {
-    const theme = localStorage.getItem('theme') || 'mint'
+    const theme = localStorage.getItem('theme') || 'dark-slate'
     document.documentElement.setAttribute('data-theme', theme)
   }, [])
 
