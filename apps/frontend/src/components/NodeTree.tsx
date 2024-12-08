@@ -1,5 +1,5 @@
 import { NodePoint } from '@repo/node-api/src/nodePoint'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { ChevronRight, ChevronDown, Folder, File } from 'lucide-react'
 import { ContextMenu } from './ContextMenu'
@@ -11,6 +11,7 @@ interface NodeTreeProps {
   onDelete?: (nodeId: number) => void
   onRestore?: (nodeId: number) => void
   onMoveNode?: (nodeId: number, newParentId: number) => void
+  selectedNodeId?: number // Add this prop
 }
 
 interface TreeNodeProps {
@@ -21,10 +22,25 @@ interface TreeNodeProps {
   onRestore?: (nodeId: number) => void
   onMoveNode?: (nodeId: number, newParentId: number) => void
   rootNodes: NodePoint[]
+  selectedNodeId?: number // Add this prop
+  isExpanded: boolean
+  onToggleExpand: (nodeId: number) => void
+  expandedNodes: Set<number> // Add this prop
 }
 
-function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode, rootNodes }: TreeNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+function TreeNode({
+  node,
+  onSelect,
+  onAddChild,
+  onDelete,
+  onRestore,
+  onMoveNode,
+  rootNodes,
+  selectedNodeId,
+  isExpanded,
+  onToggleExpand,
+  expandedNodes, // Add this prop
+}: TreeNodeProps) {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const hasChildren = node.children && node.children.length > 0
@@ -77,6 +93,7 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode,
         className={`flex items-center gap-2 p-1 rounded cursor-pointer
           ${node.deleted ? 'opacity-50 italic' : 'hover:bg-gray-100'}
           ${isDragOver ? 'bg-blue-50 border border-blue-200' : ''}
+          ${selectedNodeId === node.id ? 'bg-blue-100' : ''}
         `}
         draggable={!node.deleted}
         onDragStart={handleDragStart}
@@ -100,7 +117,7 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode,
                 ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
               onClick={(e) => {
                 e.stopPropagation()
-                setIsExpanded(!isExpanded)
+                onToggleExpand(node.id!)
               }}
             >
               <ChevronRight size={14} />
@@ -153,6 +170,10 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode,
               onRestore={onRestore}
               onMoveNode={onMoveNode}
               rootNodes={rootNodes} // Pass down the complete tree
+              selectedNodeId={selectedNodeId}
+              isExpanded={expandedNodes.has(child.id!)}
+              onToggleExpand={onToggleExpand}
+              expandedNodes={expandedNodes} // Pass this prop
             />
           ))}
         </div>
@@ -161,7 +182,47 @@ function TreeNode({ node, onSelect, onAddChild, onDelete, onRestore, onMoveNode,
   )
 }
 
-export function NodeTree({ nodes, onNodeSelect, onAddChild, onDelete, onRestore, onMoveNode }: NodeTreeProps) {
+export function NodeTree({
+  nodes,
+  onNodeSelect,
+  onAddChild,
+  onDelete,
+  onRestore,
+  onMoveNode,
+  selectedNodeId,
+}: NodeTreeProps) {
+  const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set())
+
+  // Function to find path to node
+  const findPathToNode = (nodeId: number, nodeList: NodePoint[]): number[] => {
+    for (const node of nodeList) {
+      if (node.id === nodeId) return [node.id]
+      if (node.children.length > 0) {
+        const path = findPathToNode(nodeId, node.children)
+        if (path.length) return [node.id!, ...path]
+      }
+    }
+    return []
+  }
+
+  // Expand path to selected node
+  useEffect(() => {
+    if (selectedNodeId) {
+      const path = findPathToNode(selectedNodeId, nodes)
+      setExpandedNodes(new Set([...Array.from(expandedNodes), ...path]))
+    }
+  }, [selectedNodeId, nodes])
+
+  const handleToggleExpand = (nodeId: number) => {
+    const newExpanded = new Set(expandedNodes)
+    if (newExpanded.has(nodeId)) {
+      newExpanded.delete(nodeId)
+    } else {
+      newExpanded.add(nodeId)
+    }
+    setExpandedNodes(newExpanded)
+  }
+
   return (
     <NavigationMenu.Root className="relative">
       <NavigationMenu.List className="m-0 p-0 list-none">
@@ -177,6 +238,10 @@ export function NodeTree({ nodes, onNodeSelect, onAddChild, onDelete, onRestore,
               onRestore={onRestore}
               onMoveNode={onMoveNode}
               rootNodes={nodes} // Pass the complete tree here
+              selectedNodeId={selectedNodeId}
+              isExpanded={expandedNodes.has(node.id!)}
+              onToggleExpand={handleToggleExpand}
+              expandedNodes={expandedNodes} // Pass this prop
             />
           ))}
       </NavigationMenu.List>

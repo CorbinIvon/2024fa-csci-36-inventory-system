@@ -180,6 +180,7 @@ export default function Home() {
           onDelete={handleContextDelete}
           onRestore={handleContextRestore}
           onMoveNode={handleMoveNode}
+          selectedNodeId={selectedNode?.id}
         />
       </div>
       <div className="w-2/3 p-4">
