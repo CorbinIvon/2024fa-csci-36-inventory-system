@@ -50,6 +50,18 @@ const NodePointInputType = new GraphQLInputObjectType({
   },
 })
 
+// Add new input type for updates that includes id
+const UpdateNodePointInputType = new GraphQLInputObjectType({
+  name: 'UpdateNodePointInput',
+  fields: {
+    id: { type: GraphQLInt },
+    parent: { type: GraphQLInt },
+    title: { type: GraphQLString },
+    description: { type: GraphQLString },
+    data: { type: GraphQLJSON },
+  },
+})
+
 // RootQuery
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -99,13 +111,11 @@ const Mutation = new GraphQLObjectType({
     addNodePoint: {
       type: NodePointType,
       args: {
-        parent: { type: GraphQLInt },
-        title: { type: GraphQLString },
-        description: { type: GraphQLString },
-        data: { type: GraphQLJSON },
+        input: { type: NodePointInputType },
       },
-      async resolve(_, { parent, title, description, data }) {
+      async resolve(_, { input }) {
         try {
+          const { parent, title, description, data } = input
           const result = await db.query(
             `INSERT INTO nodePoint (parent, title, description, data)
              VALUES ($1, $2, $3, $4) RETURNING *`,
@@ -114,7 +124,6 @@ const Mutation = new GraphQLObjectType({
           return result.rows[0]
         } catch (error) {
           if (error.code === '23505') {
-            // PostgreSQL unique constraint violation code
             throw new Error('Duplicate name.')
           }
           throw new Error('An unexpected error occurred.')
@@ -159,12 +168,10 @@ const Mutation = new GraphQLObjectType({
     updateNodePoint: {
       type: NodePointType,
       args: {
-        id: { type: GraphQLInt },
-        title: { type: GraphQLString },
-        description: { type: GraphQLString },
-        data: { type: GraphQLJSON },
+        input: { type: UpdateNodePointInputType },
       },
-      async resolve(_, { id, title, description, data }) {
+      async resolve(_, { input }) {
+        const { id, title, description, data } = input
         const existingNode = await db.query(`SELECT * FROM nodePoint WHERE id = $1 AND deleted = FALSE`, [id])
 
         if (existingNode.rows.length === 0) {
