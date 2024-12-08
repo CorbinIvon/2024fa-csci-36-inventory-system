@@ -298,32 +298,34 @@ export function NodeTree({ nodes, ...props }: NodeTreeProps) {
 
   return (
     <NavigationMenu.Root
-      className={`relative p-2 min-h-[calc(100vh-12rem)] rounded-lg flex flex-col ${isDragOver ? 'bg-blue-50' : ''}`}
+      className="relative h-[calc(100vh-12rem)] flex flex-col bg-[var(--background-color)] rounded-lg"
       onDragOver={handleRootDragOver}
       onDragLeave={handleRootDragLeave}
       onDrop={handleRootDrop}
     >
-      <NavigationMenu.List className="m-0 p-0 list-none flex-grow">
-        {nodes
-          .filter((n) => !n.parent)
-          .map((node) => (
-            <TreeNode
-              key={node.id}
-              node={node}
-              onSelect={props.onNodeSelect}
-              onAddChild={props.onAddChild}
-              onDelete={props.onDelete}
-              onRestore={props.onRestore}
-              onMoveNode={props.onMoveNode}
-              rootNodes={nodes} // Pass the complete tree here
-              selectedNodeId={props.selectedNodeId}
-              isExpanded={expandedNodes.has(node.id!)}
-              onToggleExpand={handleToggleExpand}
-              expandedNodes={expandedNodes} // Pass this prop
-            />
-          ))}
+      <NavigationMenu.List className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-[var(--secondary-color)] scrollbar-track-transparent">
+        <div className={`min-h-full ${isDragOver ? 'bg-[var(--secondary-color)] bg-opacity-5' : ''}`}>
+          {nodes
+            .filter((n) => !n.parent)
+            .map((node) => (
+              <TreeNode
+                key={node.id}
+                node={node}
+                onSelect={props.onNodeSelect}
+                onAddChild={props.onAddChild}
+                onDelete={props.onDelete}
+                onRestore={props.onRestore}
+                onMoveNode={props.onMoveNode}
+                rootNodes={nodes}
+                selectedNodeId={props.selectedNodeId}
+                isExpanded={expandedNodes.has(node.id!)}
+                onToggleExpand={handleToggleExpand}
+                expandedNodes={expandedNodes}
+              />
+            ))}
+        </div>
       </NavigationMenu.List>
-      <div className="mt-4 pt-4 border-t">
+      <div className="sticky bottom-0 p-4 border-t bg-[var(--background-color)]">
         <Button variant="primary" icon={SquarePlus} onClick={() => props.onAddChild?.(undefined)} className="w-full">
           Add Root Node
         </Button>
