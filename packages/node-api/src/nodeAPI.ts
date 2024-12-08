@@ -78,9 +78,9 @@ export class NodeAPI {
     return new NodePoint(response.data.deleteNodePoint)
   }
 
-  async moveNodes(nodeIds: number[], newParent: number): Promise<NodePoint[]> {
+  async moveNodes(nodeIds: number[], newParent: number | undefined): Promise<NodePoint[]> {
     const mutation = `
-      mutation($nodeIds: [Int!]!, $newParent: Int!) {
+      mutation($nodeIds: [Int!]!, $newParent: Int) {
         moveMultipleNodePoints(nodeIds: $nodeIds, newParent: $newParent) {
           id parent title description data version deleted
         }

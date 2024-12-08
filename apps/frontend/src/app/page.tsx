@@ -137,7 +137,7 @@ export default function Home() {
 
   async function handleMoveNode(nodeId: number, newParentId: number) {
     try {
-      await nodeApi.moveNodes([nodeId], newParentId)
+      await nodeApi.moveNodes([nodeId], newParentId === 0 ? undefined : newParentId)
       const fetchedNodes = await nodeApi.fetchAll()
       setNodes(fetchedNodes)
       setFilteredNodes(fetchedNodes)

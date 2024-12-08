@@ -1,18 +1,18 @@
 import { NodePoint } from '@repo/node-api/src/nodePoint'
 import { useState, useEffect } from 'react'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
-import { ChevronRight, ChevronDown, Folder, File, LucideIcon } from 'lucide-react'
+import { ChevronRight, ChevronDown, Folder, File, LucideIcon, SquarePlus } from 'lucide-react'
 import { ContextMenu } from './ContextMenu'
 import * as LucideIcons from 'lucide-react'
 
 interface NodeTreeProps {
   nodes: NodePoint[]
   onNodeSelect?: (nodeId: string) => void
-  onAddChild?: (parentId: number) => void
+  onAddChild?: (parentId: number | undefined) => void
   onDelete?: (nodeId: number) => void
   onRestore?: (nodeId: number) => void
   onMoveNode?: (nodeId: number, newParentId: number) => void
-  selectedNodeId?: number // Add this prop
+  selectedNodeId?: number
 }
 
 interface TreeNodeProps {
@@ -88,17 +88,21 @@ function TreeNode({
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
+    e.stopPropagation() // Add this to prevent event bubbling
     if (!node.deleted) {
       setIsDragOver(true)
     }
   }
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation() // Add this to prevent event bubbling
     setIsDragOver(false)
   }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
+    e.stopPropagation() // Add this to prevent event bubbling
     setIsDragOver(false)
     const sourceId = parseInt(e.dataTransfer.getData('nodeId'))
 
@@ -121,7 +125,7 @@ function TreeNode({
   }
 
   return (
-    <div className="pl-2">
+    <div className="pl-2" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
       <div
         className={`flex items-center gap-2 p-1 rounded cursor-pointer
           ${node.deleted ? 'opacity-50 italic' : 'hover:bg-gray-100'}
@@ -130,9 +134,6 @@ function TreeNode({
         `}
         draggable={!node.deleted}
         onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
         onClick={(e) => {
           if (onSelect) onSelect(node.id!.toString())
         }}
@@ -225,6 +226,7 @@ export function NodeTree({
   selectedNodeId,
 }: NodeTreeProps) {
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set())
+  const [isDragOver, setIsDragOver] = useState(false)
 
   // Function to find path to node
   const findPathToNode = (nodeId: number, nodeList: NodePoint[]): number[] => {
@@ -256,9 +258,33 @@ export function NodeTree({
     setExpandedNodes(newExpanded)
   }
 
+  const handleRootDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }
+
+  const handleRootDragLeave = () => {
+    setIsDragOver(false)
+  }
+
+  const handleRootDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    const nodeId = parseInt(e.dataTransfer.getData('nodeId'))
+    if (!isNaN(nodeId)) {
+      // Pass undefined or null as newParent to make it a root node
+      onMoveNode?.(nodeId, 0)
+    }
+  }
+
   return (
-    <NavigationMenu.Root className="relative">
-      <NavigationMenu.List className="m-0 p-0 list-none">
+    <NavigationMenu.Root
+      className={`relative p-2 min-h-[calc(100vh-12rem)] rounded-lg flex flex-col ${isDragOver ? 'bg-blue-50' : ''}`}
+      onDragOver={handleRootDragOver}
+      onDragLeave={handleRootDragLeave}
+      onDrop={handleRootDrop}
+    >
+      <NavigationMenu.List className="m-0 p-0 list-none flex-grow">
         {nodes
           .filter((n) => !n.parent)
           .map((node) => (
@@ -278,6 +304,15 @@ export function NodeTree({
             />
           ))}
       </NavigationMenu.List>
+      <div className="mt-4 pt-4 border-t">
+        <button
+          onClick={() => onAddChild?.(undefined)}
+          className="w-full py-2 px-3 text-sm text-gray-600 hover:bg-gray-100 rounded-md flex items-center justify-center gap-2"
+        >
+          <SquarePlus size={16} />
+          Add Root Node
+        </button>
+      </div>
     </NavigationMenu.Root>
   )
 }
