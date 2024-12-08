@@ -1,5 +1,6 @@
 import { NodePoint, NodePointData } from '@repo/node-api/src/nodePoint'
 import { useState, useEffect } from 'react'
+import { Button } from './Buttons/Button'
 
 interface NodeEditorProps {
   node: NodePoint | null
@@ -101,20 +102,12 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
             <div className="flex justify-between items-center mb-2">
               <label className="block">Data (JSON)</label>
               <div className="space-x-2">
-                <button
-                  type="button"
-                  onClick={formatJson}
-                  className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                >
+                <Button type="button" onClick={formatJson} variant="ghost" size="sm">
                   Format
-                </button>
-                <button
-                  type="button"
-                  onClick={minifyJson}
-                  className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                >
+                </Button>
+                <Button type="button" onClick={minifyJson} variant="ghost" size="sm">
                   Minify
-                </button>
+                </Button>
               </div>
             </div>
             <textarea
@@ -123,35 +116,27 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
                 setJsonData(e.target.value)
                 validateJson(e.target.value)
               }}
-              className={`w-full p-2 border rounded font-mono text-sm h-48 ${jsonError ? 'border-red-500' : ''}`}
+              className={`w-full p-2 border rounded font-mono text-sm h-48 bg-[var(--secondary-color)] bg-opacity-5
+                ${jsonError ? 'border-red-500' : 'border-[var(--secondary-color)] border-opacity-20'}`}
               spellCheck={false}
             />
             {jsonError && <p className="text-red-500 text-sm mt-1">{jsonError}</p>}
           </div>
           <div className="flex gap-2 mt-4">
-            <button
+            <Button
               type="submit"
+              variant="primary"
               disabled={!!jsonError}
-              className={`px-4 py-2 text-white rounded ${
-                jsonError ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-              }`}
+              className={jsonError ? 'opacity-50 cursor-not-allowed' : ''}
             >
               Save
-            </button>
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-            >
+            </Button>
+            <Button type="button" variant="secondary" onClick={onCancel}>
               Cancel
-            </button>
-            <button
-              type="button"
-              onClick={onDelete}
-              className="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 ml-auto"
-            >
+            </Button>
+            <Button type="button" variant="danger" onClick={onDelete} className="ml-auto">
               Delete Node
-            </button>
+            </Button>
           </div>
         </div>
       </form>

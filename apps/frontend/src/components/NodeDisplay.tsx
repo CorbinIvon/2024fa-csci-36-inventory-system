@@ -51,7 +51,9 @@ export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDi
         </div>
         <div>
           <label className="text-sm font-medium text-gray-500">Data</label>
-          <pre className="bg-gray-50 p-2 rounded overflow-auto">{JSON.stringify(node.data, null, 2)}</pre>
+          <pre className="bg-[var(--secondary-color)] bg-opacity-5 p-2 rounded overflow-auto border border-[var(--secondary-color)] border-opacity-20">
+            {JSON.stringify(node.data, null, 2)}
+          </pre>
         </div>
       </div>
     </div>

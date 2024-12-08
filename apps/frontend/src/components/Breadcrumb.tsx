@@ -48,9 +48,11 @@ export function Breadcrumb({ nodes, selectedNodeId, onNodeClick }: BreadcrumbPro
               {index > 0 && <ChevronRight size={16} className="mx-2 text-gray-400 shrink-0" />}
               <button
                 onClick={() => onNodeClick(node.id!)}
-                className={`hover:text-blue-600 truncate max-w-[200px] ${
+                className={`hover:bg-[var(--secondary-color)] hover:bg-opacity-10 px-2 py-0.5 rounded truncate max-w-[200px] ${
                   node.deleted ? 'italic text-gray-400' : ''
-                } ${node.id === selectedNodeId ? 'font-medium text-gray-900' : ''}`}
+                } ${
+                  node.id === selectedNodeId ? 'font-medium text-[var(--text-color)] bg-[var(--primary-color)]' : ''
+                }`}
                 title={node.title}
               >
                 {node.title}

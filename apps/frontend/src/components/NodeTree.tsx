@@ -129,10 +129,14 @@ function TreeNode({
   return (
     <div className="pl-2" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
       <div
-        className={`flex items-center gap-2 p-1 rounded cursor-pointer
-          ${node.deleted ? 'opacity-50 italic' : 'hover:bg-gray-100'}
-          ${isDragOver ? 'bg-blue-50 border border-blue-200' : ''}
-          ${selectedNodeId === node.id ? 'bg-blue-100' : ''}
+        className={`flex items-center gap-2 p-1 rounded cursor-pointer transition-colors
+          ${node.deleted ? 'opacity-50 italic' : 'hover:bg-[var(--secondary-color)] hover:bg-opacity-10'}
+          ${isDragOver ? 'bg-[var(--secondary-color)] bg-opacity-5 border border-[var(--secondary-color)] border-opacity-20' : ''}
+          ${
+            selectedNodeId === node.id
+              ? 'bg-[var(--primary-color)] bg-opacity-10 border-l-4 border-[var(--primary-color)]'
+              : 'border-l-4 border-transparent'
+          }
         `}
         draggable={!node.deleted}
         onDragStart={handleDragStart}
