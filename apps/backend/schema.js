@@ -330,14 +330,14 @@ const Mutation = new GraphQLObjectType({
 
         // Use a recursive CTE to find all descendants
         const descendantsQuery = `
-      WITH RECURSIVE node_hierarchy AS (
-        SELECT id FROM nodePoint WHERE id = $1
-        UNION ALL
-        SELECT np.id FROM nodePoint np
-        INNER JOIN node_hierarchy nh ON np.parent = nh.id
-      )
-      SELECT id FROM node_hierarchy
-    `
+          WITH RECURSIVE node_hierarchy AS (
+            SELECT id FROM nodePoint WHERE id = $1
+            UNION ALL
+            SELECT np.id FROM nodePoint np
+            INNER JOIN node_hierarchy nh ON np.parent = nh.id
+          )
+          SELECT id FROM node_hierarchy
+        `
         const descendantsResult = await db.query(descendantsQuery, [id])
         const allIds = descendantsResult.rows.map((row) => row.id)
 
