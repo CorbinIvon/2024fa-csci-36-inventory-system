@@ -102,6 +102,18 @@ export class NodeAPI {
     return new NodePoint(response.data.restoreNodePoint)
   }
 
+  async hardDeleteNode(id: number): Promise<NodePoint> {
+    const mutation = `
+      mutation($id: Int!) {
+        hardDeleteNodePoint(id: $id) {
+          id parent title description data version deleted
+        }
+      }
+    `
+    const response = await this.graphqlRequest(mutation, { id })
+    return new NodePoint(response.data.hardDeleteNodePoint)
+  }
+
   private buildNodeTree(flatNodes: NodePointData[]): NodePoint[] {
     const nodeMap = new Map<number, NodePoint>()
     const rootNodes: NodePoint[] = []
