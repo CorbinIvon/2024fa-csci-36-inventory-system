@@ -318,6 +318,36 @@ const Mutation = new GraphQLObjectType({
         return result.rows[0]
       },
     },
+    hardDeleteNodePoint: {
+      type: NodePointType,
+      args: { id: { type: GraphQLInt } },
+      async resolve(_, { id }) {
+        // Ensure the node exists
+        const existingNode = await db.query(`SELECT * FROM nodePoint WHERE id = $1`, [id])
+        if (existingNode.rows.length === 0) {
+          throw new Error(`NodePoint with id ${id} does not exist.`)
+        }
+
+        // Use a recursive CTE to find all descendants
+        const descendantsQuery = `
+          WITH RECURSIVE node_hierarchy AS (
+            SELECT id FROM nodePoint WHERE id = $1
+            UNION ALL
+            SELECT np.id FROM nodePoint np
+            INNER JOIN node_hierarchy nh ON np.parent = nh.id
+          )
+          SELECT id FROM node_hierarchy
+        `
+        const descendantsResult = await db.query(descendantsQuery, [id])
+        const allIds = descendantsResult.rows.map((row) => row.id)
+
+        // Delete the nodes themselves
+        await db.query(`DELETE FROM nodePoint WHERE id = ANY($1::int[])`, [allIds])
+
+        // Return the originally deleted node’s data
+        return existingNode.rows[0]
+      },
+    },
   },
 })
 
