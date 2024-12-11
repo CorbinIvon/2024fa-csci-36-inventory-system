@@ -72,6 +72,22 @@ export default function Home() {
     }
   }
 
+  async function handleNodeHardDelete() {
+    if (!selectedNode?.id) return
+
+    try {
+      await nodeApi.hardDeleteNode(selectedNode.id)
+      // Refresh the tree
+      const fetchedNodes = await nodeApi.fetchAll()
+      setNodes(fetchedNodes)
+      setFilteredNodes(fetchedNodes)
+      setSelectedNode(null)
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Failed to hard delete node:', error)
+    }
+  }
+
   async function handleNodeRestore() {
     if (!selectedNode?.id) return
 
@@ -211,6 +227,7 @@ export default function Home() {
                   }
                 }}
                 onRestore={handleNodeRestore}
+                onHardDelete={handleNodeHardDelete}
               />
             )}
           </>

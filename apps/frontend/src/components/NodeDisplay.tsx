@@ -8,9 +8,18 @@ interface NodeDisplayProps {
   onEditClick: () => void
   onAddClick: (parent: number | undefined) => void
   onRestore?: () => void
+  onHardDelete?: () => void
+  onSoftDelete?: () => void
 }
 
-export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDisplayProps) {
+export function NodeDisplay({
+  node,
+  onEditClick,
+  onAddClick,
+  onRestore,
+  onHardDelete,
+  onSoftDelete,
+}: NodeDisplayProps) {
   if (!node) return null
 
   return (
@@ -18,9 +27,16 @@ export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDi
       {node.deleted && onRestore && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded flex justify-between items-center">
           <span>This node has been deleted</span>
-          <Button variant="primary" size="sm" onClick={onRestore}>
-            Restore
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="primary" size="sm" onClick={onRestore}>
+              Restore
+            </Button>
+            {onHardDelete && (
+              <Button variant="danger" size="sm" onClick={onHardDelete}>
+                Hard Delete
+              </Button>
+            )}
+          </div>
         </div>
       )}
       <div className="flex justify-between items-center mb-4">
@@ -29,6 +45,11 @@ export function NodeDisplay({ node, onEditClick, onAddClick, onRestore }: NodeDi
           <div className="flex gap-2">
             <ButtonRound variant="ghost" icon={Edit2} onClick={onEditClick} title="Edit node" />
             <ButtonRound variant="ghost" icon={SquarePlus} onClick={() => onAddClick(node.id)} title="Add child" />
+            {onSoftDelete && (
+              <Button variant="danger" size="sm" onClick={onSoftDelete}>
+                Delete
+              </Button>
+            )}
           </div>
         )}
       </div>
