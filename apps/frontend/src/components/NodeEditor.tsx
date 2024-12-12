@@ -9,11 +9,92 @@ interface NodeEditorProps {
   onDelete: () => void
 }
 
+interface KeyValuePair {
+  key: string
+  value: string
+}
+
+function KeyValueEditor({
+  data,
+  onChange,
+  onAdd,
+  onDelete,
+}: {
+  data: Record<string, any>
+  onChange: (key: string, value: string, oldKey?: string) => void
+  onAdd: () => void
+  onDelete: (key: string) => void
+}) {
+  const [editingKeys, setEditingKeys] = useState<Record<string, string>>({})
+
+  return (
+    <div className="space-y-2">
+      {Object.entries(data).map(([key, value]) => (
+        <div key={key} className="flex gap-2 items-center">
+          <button
+            type="button"
+            onClick={() => onDelete(key)}
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            title="Delete field"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </button>
+          <input
+            type="text"
+            value={editingKeys[key] ?? key}
+            onChange={(e) => {
+              setEditingKeys((prev) => ({ ...prev, [key]: e.target.value }))
+            }}
+            onBlur={(e) => {
+              const newKey = editingKeys[key]
+              if (newKey !== undefined && newKey !== key) {
+                onChange(newKey, value, key)
+                setEditingKeys((prev) => {
+                  const next = { ...prev }
+                  delete next[key]
+                  return next
+                })
+              }
+            }}
+            className="w-1/2 p-2 border rounded"
+            placeholder="Key"
+          />
+          <input
+            type="text"
+            value={typeof value === 'string' ? value : JSON.stringify(value)}
+            onChange={(e) => onChange(key, e.target.value)}
+            className="w-1/2 p-2 border rounded"
+            placeholder="Value"
+          />
+        </div>
+      ))}
+      <Button type="button" onClick={onAdd} variant="ghost" size="sm">
+        Add Field
+      </Button>
+    </div>
+  )
+}
+
 export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [jsonData, setJsonData] = useState('')
   const [jsonError, setJsonError] = useState<string | null>(null)
+  const [isJsonMode, setIsJsonMode] = useState(false)
 
   useEffect(() => {
     if (node) {
@@ -52,6 +133,39 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
     } catch (error) {
       setJsonError((error as Error).message)
     }
+  }
+
+  const getParsedData = (): Record<string, any> => {
+    try {
+      return JSON.parse(jsonData)
+    } catch {
+      return {}
+    }
+  }
+
+  const updateKeyValue = (key: string, value: string, oldKey?: string) => {
+    const data = getParsedData()
+    if (oldKey !== undefined && oldKey !== key) {
+      // If we're updating a key, remove the old key and add the new one
+      delete data[oldKey]
+    }
+    data[key] = value
+    setJsonData(JSON.stringify(data, null, 2))
+    validateJson(JSON.stringify(data, null, 2))
+  }
+
+  const addNewField = () => {
+    const data = getParsedData()
+    data[''] = ''
+    setJsonData(JSON.stringify(data, null, 2))
+    validateJson(JSON.stringify(data, null, 2))
+  }
+
+  const deleteField = (key: string) => {
+    const data = getParsedData()
+    delete data[key]
+    setJsonData(JSON.stringify(data, null, 2))
+    validateJson(JSON.stringify(data, null, 2))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,26 +214,44 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
           </div>
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="block">Data (JSON)</label>
+              <label className="block">Data</label>
               <div className="space-x-2">
-                <Button type="button" onClick={formatJson} variant="ghost" size="sm">
-                  Format
+                <Button type="button" onClick={() => setIsJsonMode(!isJsonMode)} variant="ghost" size="sm">
+                  {isJsonMode ? 'Switch to Key-Value' : 'Switch to JSON'}
                 </Button>
-                <Button type="button" onClick={minifyJson} variant="ghost" size="sm">
-                  Minify
-                </Button>
+                {isJsonMode && (
+                  <>
+                    <Button type="button" onClick={formatJson} variant="ghost" size="sm">
+                      Format
+                    </Button>
+                    <Button type="button" onClick={minifyJson} variant="ghost" size="sm">
+                      Minify
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
-            <textarea
-              value={jsonData}
-              onChange={(e) => {
-                setJsonData(e.target.value)
-                validateJson(e.target.value)
-              }}
-              className={`w-full p-2 border rounded font-mono text-sm h-48 bg-[var(--secondary-color)] bg-opacity-5
-                ${jsonError ? 'border-red-500' : 'border-[var(--secondary-color)] border-opacity-20'}`}
-              spellCheck={false}
-            />
+            {isJsonMode ? (
+              <textarea
+                value={jsonData}
+                onChange={(e) => {
+                  setJsonData(e.target.value)
+                  validateJson(e.target.value)
+                }}
+                className={`w-full p-2 border rounded font-mono text-sm h-48 bg-[var(--secondary-color)] bg-opacity-5
+                  ${jsonError ? 'border-red-500' : 'border-[var(--secondary-color)] border-opacity-20'}`}
+                spellCheck={false}
+              />
+            ) : (
+              <div className="border rounded p-4">
+                <KeyValueEditor
+                  data={getParsedData()}
+                  onChange={updateKeyValue}
+                  onAdd={addNewField}
+                  onDelete={deleteField}
+                />
+              </div>
+            )}
             {jsonError && <p className="text-red-500 text-sm mt-1">{jsonError}</p>}
           </div>
           <div className="flex gap-2 mt-4">
