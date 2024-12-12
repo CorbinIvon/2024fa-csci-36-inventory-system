@@ -46,6 +46,18 @@ export function SearchBar({ onSearch, nodes, onNodeSelect }: SearchBarProps) {
     onSearch(nodes)
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchResults.length > 0) {
+      const firstResult = searchResults[0]
+      // Add check to ensure firstResult exists
+      if (firstResult && firstResult.id !== undefined) {
+        onNodeSelect(firstResult.id.toString())
+        setSearchTerm('')
+        setSearchResults([])
+      }
+    }
+  }
+
   return (
     <div className="relative">
       <div className="relative">
@@ -56,6 +68,7 @@ export function SearchBar({ onSearch, nodes, onNodeSelect }: SearchBarProps) {
           placeholder="Search by title, description, or data..."
           className="pl-10 pr-4 py-2 w-full border rounded"
           onChange={searchNodes}
+          onKeyPress={handleKeyPress}
         />
       </div>
 
