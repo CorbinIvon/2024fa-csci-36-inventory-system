@@ -12,6 +12,39 @@ interface NodeDisplayProps {
   onSoftDelete?: () => void
 }
 
+function KeyValueDisplay({ data }: { data: Record<string, any> }) {
+  return (
+    <table className="w-full table-fixed">
+      <colgroup>
+        <col className="w-auto" />
+        <col className="w-auto" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th className="py-2 px-4 text-left font-medium border border-[var(--primary-color)] border-opacity-20 strong underline">
+            Key
+          </th>
+          <th className="py-2 px-4 text-left font-medium border border-[var(--primary-color)] border-opacity-20 strong underline">
+            Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.entries(data).map(([key, value]) => (
+          <tr key={key}>
+            <td className="py-2 px-4 font-medium whitespace-nowrap overflow-hidden text-ellipsis border border-[var(--primary-color)] border-opacity-20">
+              {key}
+            </td>
+            <td className="py-2 px-4 font-mono break-all border border-[var(--primary-color)] border-opacity-20">
+              {typeof value === 'string' ? value : JSON.stringify(value)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 export function NodeDisplay({
   node,
   onEditClick,
@@ -74,9 +107,13 @@ export function NodeDisplay({
         </div>
         <div>
           <label className="text-sm font-medium text-gray-500">Data</label>
-          <pre className="bg-[var(--secondary-color)] bg-opacity-5 p-2 rounded overflow-auto border border-[var(--secondary-color)] border-opacity-20">
-            {JSON.stringify(node.data, null, 2)}
-          </pre>
+          <div className="bg-[var(--secondary-color)] bg-opacity-5 p-4 rounded border border-[var(--secondary-color)] border-opacity-20">
+            {Object.keys(node.data || {}).length > 0 ? (
+              <KeyValueDisplay data={node.data || {}} />
+            ) : (
+              <p className="text-gray-500">No data</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
