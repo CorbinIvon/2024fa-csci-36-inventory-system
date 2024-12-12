@@ -28,6 +28,7 @@ export function ContextMenu({
   currentNodeId,
 }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [showMoveSearch, setShowMoveSearch] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState<NodePoint[]>([])
@@ -41,6 +42,13 @@ export function ContextMenu({
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [onClose])
+
+  useEffect(() => {
+    if (showMoveSearch) {
+      // Focus the search input when move search is shown
+      searchInputRef.current?.focus()
+    }
+  }, [showMoveSearch])
 
   // Improved descendant check that traverses up through parents
   const findNode = (nodeId: number, nodeList: NodePoint[]): NodePoint | null => {
@@ -91,6 +99,16 @@ export function ContextMenu({
     setSearchResults(results)
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchResults.length > 0) {
+      const firstResult = searchResults[0]
+      if (firstResult && firstResult.id !== undefined) {
+        onMove?.(firstResult.id)
+        onClose()
+      }
+    }
+  }
+
   return (
     <div
       ref={menuRef}
@@ -128,9 +146,11 @@ export function ContextMenu({
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Search for destination..."
               className="w-full pl-8 pr-4 py-2 border rounded text-sm"
               autoFocus

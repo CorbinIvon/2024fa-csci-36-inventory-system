@@ -1,5 +1,5 @@
 import { NodePoint, NodePointData } from '@repo/node-api/src/nodePoint'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from './Buttons/Button'
 
 interface NodeEditorProps {
@@ -95,12 +95,14 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
   const [jsonData, setJsonData] = useState('')
   const [jsonError, setJsonError] = useState<string | null>(null)
   const [isJsonMode, setIsJsonMode] = useState(false)
+  const titleInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (node) {
       setTitle(node.title)
       setDescription(node.description)
       setJsonData(JSON.stringify(node.data || {}, null, 2))
+      titleInputRef.current?.focus()
     }
   }, [node])
 
@@ -198,6 +200,7 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
           <div>
             <label className="block mb-2">Title</label>
             <input
+              ref={titleInputRef}
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
