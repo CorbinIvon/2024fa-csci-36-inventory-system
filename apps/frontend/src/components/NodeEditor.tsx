@@ -214,7 +214,12 @@ export function NodeEditor({ node, onSave, onCancel, onDelete }: NodeEditorProps
           </div>
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="block">Data</label>
+              <div>
+                <label className="block">Data</label>
+                <p className="text-sm text-gray-500 mt-1">
+                  Note: &quot;icon&quot; and &quot;count&quot; are special keys with built-in functionality
+                </p>
+              </div>
               <div className="space-x-2">
                 <Button type="button" onClick={() => setIsJsonMode(!isJsonMode)} variant="ghost" size="sm">
                   {isJsonMode ? 'Switch to Key-Value' : 'Switch to JSON'}
