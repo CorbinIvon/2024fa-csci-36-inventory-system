@@ -4,14 +4,8 @@ import { NodePoint, NodePointData } from './nodePoint'
 const GRAPHQL_PORT = process.env.GRAPHQL_PORT || 4000
 
 export class NodeAPI {
-  private apiUrl: string
-
-  constructor(apiUrl: string = `http://${window.location.hostname}:${GRAPHQL_PORT}/graphql`) {
-    this.apiUrl = apiUrl
-  }
-
   private async graphqlRequest(query: string, variables: any = {}): Promise<any> {
-    const response = await fetch(this.apiUrl, {
+    const response = await fetch(`http://${window.location.hostname}:${GRAPHQL_PORT}/graphql`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables }),
