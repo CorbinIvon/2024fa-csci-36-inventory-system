@@ -5,11 +5,9 @@ Download Docker-Desktop from [Docker](https://www.docker.com/products/docker-des
 ```bash
 git clone git@github.com:CorbinIvon/2024fa-csci-36-inventory-system.git
 cd 2024fa-csci-36-inventory-system
+# Turbo may need to be ran as root.
 npm install turbo --global
 npm install
-cd apps/backend
-docker-compose up -d
-cd ../../
 turbo dev
 ```
 
