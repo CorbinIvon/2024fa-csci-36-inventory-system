@@ -1,9 +1,12 @@
+require('dotenv').config()
 import { NodePoint, NodePointData } from './nodePoint'
+
+const GRAPHQL_PORT = process.env.GRAPHQL_PORT || 4000
 
 export class NodeAPI {
   private apiUrl: string
 
-  constructor(apiUrl: string = 'http://localhost:4000/graphql') {
+  constructor(apiUrl: string = `http://${window.location.hostname}:${GRAPHQL_PORT}/graphql`) {
     this.apiUrl = apiUrl
   }
 
