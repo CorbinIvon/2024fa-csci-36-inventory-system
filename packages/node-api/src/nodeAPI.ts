@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({ path: '../../.env' })
 import { NodePoint, NodePointData } from './nodePoint'
 
 const GRAPHQL_PORT = process.env.GRAPHQL_PORT || 4000
