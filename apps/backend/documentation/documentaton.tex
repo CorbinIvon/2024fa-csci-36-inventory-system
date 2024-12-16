@@ -1,0 +1,324 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{float}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\title{Project Documentation: Inventory Management GraphQL API}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+This documentation describes the backend API for a personal inventory management System. The system organizes inventory
+items as \textit{nodePoints} in a hierarchical (tree-like) structure representing their physical location, enabling querying, updating, and managing items and their historical versions via a GraphQL interface.
+
+\subsection{Project Overview}
+The backend provides:
+\begin{itemize}
+    \item Storage and retrieval of inventory items organized as a hierarchy of \textit{nodePoints}.
+    \item Ability to track history (\textit{nodePointHistory}) of changes, including additions, updates, and deletions.
+    \item GraphQL queries and mutations to interact with the data.
+\end{itemize}
+
+\section{System Architecture (Brief)}
+\subsection{Technologies Used}
+\begin{itemize}
+    \item \textbf{Node.js:} Runs the server.
+    \item \textbf{GraphQL Yoga:} Provides a GraphQL server environment.
+    \item \textbf{PostgreSQL:} Stores \texttt{nodePoint} and \texttt{nodePointHistory} records.
+    \item \textbf{Docker:} Manages the PostgreSQL database container.
+\end{itemize}
+
+\subsection{Database Schema (Summary)}
+Two primary database tables support the GraphQL operations:
+\begin{itemize}
+    \item \textbf{nodePoint:} Stores hierarchical items with attributes like \texttt{id}, \texttt{parent}, \texttt{title}, \texttt{description}, \texttt{data}, \texttt{version}, and \texttt{deleted} flag.
+    \item \textbf{nodePointHistory:} Stores historical records of changes applied to nodePoints.
+\end{itemize}
+
+\section{GraphQL Schema and Operations}
+The GraphQL schema defines both queries and mutations. Clients interact with these endpoints to:
+\begin{itemize}
+    \item Retrieve nodes, hierarchical structures, and historical records.
+    \item Create, update, and delete nodes.
+    \item Move nodes within the hierarchy and restore previously deleted nodes.
+\end{itemize}
+
+\subsection{Object Types}
+\subsubsection{NodePoint}
+A \texttt{NodePoint} represents an inventory item (or location) in the hierarchy.
+
+\noindent \textbf{Fields:}
+\begin{itemize}
+    \item \texttt{id: Int} - Unique identifier of the node.
+    \item \texttt{parent: Int} - Parent node’s ID.
+    \item \texttt{title: String} - Node’s title or name.
+    \item \texttt{description: String} - Optional descriptive text.
+    \item \texttt{data: JSON} - JSON data field for additional info.
+    \item \texttt{version: Int} - Version number incremented on updates.
+    \item \texttt{deleted: Boolean} - Indicates whether the node is deleted (soft deletion).
+\end{itemize}
+
+\subsubsection{NodePointHistory}
+A \texttt{NodePointHistory} entry records a historical snapshot of a node at the time of a particular action.
+
+\noindent \textbf{Fields:}
+\begin{itemize}
+    \item \texttt{id: Int} - Unique identifier of the history record.
+    \item \texttt{nodePointId: Int} - ID of the associated nodePoint.
+    \item \texttt{version: Int} - Version number of the node at that time.
+    \item \texttt{title: String} - Title of the node at that historical moment.
+    \item \texttt{description: String} - Description of the node at that time.
+    \item \texttt{data: JSON} - Associated JSON data at that time.
+    \item \texttt{action: String} - The action taken (e.g., \texttt{"update"}, \texttt{"delete"}, \texttt{"restore"}).
+    \item \texttt{timestamp: String} - When the action occurred.
+\end{itemize}
+
+\subsection{Query Operations}
+The following queries allow clients to retrieve node information and history:
+
+\subsubsection{fetchAll}
+\textbf{Description:}
+Retrieves all \texttt{nodePoint} entries, including those marked as deleted.
+
+\noindent \textbf{Query Example:}
+\begin{minted}{javascript}
+query {
+  fetchAll {
+    id
+    parent
+    title
+    deleted
+  }
+}
+\end{minted}
+
+\noindent \textbf{Use Case:}
+Useful for retrieving a complete list of nodes for initial data loads, audits, or administrative tasks.
+
+\subsubsection{fetchHierarchy(id: Int)}
+\textbf{Description:}
+Given a node’s \texttt{id}, returns that node and all its descendants, excluding deleted nodes. This provides a subtree of the hierarchy.
+
+\noindent \textbf{Query Example:}
+\begin{minted}{javascript}
+query {
+  fetchHierarchy(id: 5) {
+    id
+    parent
+    title
+    deleted
+  }
+}
+\end{minted}
+
+\noindent \textbf{Use Case:}
+Ideal for showing a segment of the tree structure, helping users visualize where a particular item sits in the larger inventory.
+
+\subsubsection{fetchNodeHistory(nodePointId: Int)}
+\textbf{Description:}
+Returns historical records for a given node, including past titles, data, and actions (updates, deletes, etc.).
+
+\noindent \textbf{Query Example:}
+\begin{minted}{javascript}
+query {
+  fetchNodeHistory(nodePointId: 10) {
+    version
+    title
+    description
+    action
+    timestamp
+  }
+}
+\end{minted}
+
+\noindent \textbf{Use Case:}
+Helps developers audit changes and understand the evolution of a node over time.
+
+\section{Mutation Operations}
+The mutations enable creating, updating, moving, and deleting nodes in the hierarchy, as well as managing their history.
+
+\subsection{Input Types}
+\subsubsection{NodePointInput}
+\begin{itemize}
+    \item \texttt{parent: Int}
+    \item \texttt{title: String}
+    \item \texttt{description: String}
+    \item \texttt{data: JSON}
+\end{itemize}
+
+\subsubsection{UpdateNodePointInput}
+\begin{itemize}
+    \item \texttt{id: Int}
+    \item \texttt{parent: Int}
+    \item \texttt{title: String}
+    \item \texttt{description: String}
+    \item \texttt{data: JSON}
+\end{itemize}
+
+\subsection{Available Mutations}
+\subsubsection{addNodePoint(input: NodePointInput)}
+\textbf{Description:}
+Inserts a single new nodePoint into the database.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  addNodePoint(input: {
+    parent: 1,
+    title: "New Item",
+    description: "A newly added item",
+    data: { "color": "blue" }
+  }) {
+    id
+    title
+    version
+  }
+}
+\end{minted}
+
+\noindent \textbf{Use Case:}
+Adds a new item to the inventory hierarchy.
+
+\subsubsection{addMultipleNodePoints(nodes: [NodePointInput])}
+\textbf{Description:}
+Inserts multiple nodePoints in a single request, streamlining bulk data entry.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  addMultipleNodePoints(nodes: [
+    { parent: 1, title: "Item A", data: {} },
+    { parent: 1, title: "Item B", data: {} }
+  ]) {
+    id
+    title
+  }
+}
+\end{minted}
+
+\subsubsection{updateNodePoint(input: UpdateNodePointInput)}
+\textbf{Description:}
+Updates the specified nodePoint and records the previous version in \texttt{nodePointHistory}.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  updateNodePoint(input: {
+    id: 10,
+    title: "Updated Title"
+  }) {
+    id
+    title
+    version
+  }
+}
+\end{minted}
+
+\noindent \textbf{Use Case:}
+Allows modifying item attributes and tracking versions.
+
+\subsubsection{deleteNodePoint(id: Int)}
+\textbf{Description:}
+Soft-deletes the nodePoint, marking it as deleted and logging the action in the history.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  deleteNodePoint(id: 10) {
+    id
+    deleted
+  }
+}
+\end{minted}
+
+\subsubsection{moveMultipleNodePoints(newParent: Int, nodeIds: [Int])}
+\textbf{Description:}
+Moves multiple specified nodePoints under a new parent, helping reorganize the hierarchy.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  moveMultipleNodePoints(newParent: 2, nodeIds: [10, 11, 12]) {
+    id
+    parent
+  }
+}
+\end{minted}
+
+\subsubsection{restoreNodePoint(id: Int)}
+\textbf{Description:}
+Restores a previously soft-deleted nodePoint, incrementing its version and logging the action.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  restoreNodePoint(id: 10) {
+    id
+    deleted
+    version
+  }
+}
+\end{minted}
+
+\subsubsection{hardDeleteNodePoint(id: Int)}
+\textbf{Description:}
+Permanently deletes a nodePoint and all its descendants from the database, removing it entirely from the system.
+
+\noindent \textbf{Mutation Example:}
+\begin{minted}{javascript}
+mutation {
+  hardDeleteNodePoint(id: 10) {
+    id
+  }
+}
+\end{minted}
+
+\section{Usage and Setup}
+\subsection{Building and Running the Server}
+Developers can run the following to start the backend and the frontend:
+\begin{verbatim}
+git clone git@github.com:CorbinIvon/2024fa-csci-36-inventory-system.git
+cd 2024fa-csci-36-inventory-system
+npm install turbo --global
+npm install
+cd apps/backend
+docker-compose up -d
+cd ../../
+turbo dev
+\end{verbatim}
+The GraphQL endpoint will be accessible at \texttt{http://localhost:4000/graphql}.
+
+\small\textcolor{red}{Note: Docker must be running, or the server will fail.}
+\section{Additional Considerations}
+%\subsection{Authentication and Authorization}
+%(If needed, add notes later if you introduce auth layers.)
+
+\subsection{Error Handling}
+Errors generally return as GraphQL errors. For example, attempting to fetch or update a non-existent node will result in an error message within the GraphQL response.
+
+%\subsection{Future Additions}
+% Add details here about potential features like authentication, more complex queries,
+% or integrations with frontend clients when you finalize the architecture.
+
+\section{Conclusions}
+This documentation provides an overview of the GraphQL schema and endpoints for the inventory management backend. Developers can use these queries and mutations to manage hierarchical items, track their history, and maintain a versioned audit trail.
+
+\end{document}
