@@ -2,10 +2,11 @@ require('dotenv').config({ path: '../../.env' })
 import { NodePoint, NodePointData } from './nodePoint'
 
 const GRAPHQL_PORT = process.env.GRAPHQL_PORT || 4000
+const GRAPHQL_URL = process.env.GRAPHQL_URL || 'localhost'
 
 export class NodeAPI {
   private async graphqlRequest(query: string, variables: any = {}): Promise<any> {
-    const response = await fetch(`http://${window.location.hostname}:${GRAPHQL_PORT}/graphql`, {
+    const response = await fetch(`http://${GRAPHQL_URL}:${GRAPHQL_PORT}/graphql`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables }),
